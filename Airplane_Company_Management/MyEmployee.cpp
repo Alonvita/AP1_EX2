@@ -16,16 +16,16 @@
  * @param seniority int -- a seniority.
  * @param birthYear int -- a birth year.
  */
-MyEmployee::MyEmployee(DescriptorsFactory * factoryPtr, Jobs jobs,
+MyEmployee::MyEmployee(DescriptorsFactory * factoryPtr, Jobs job,
                        Employee * employer, int seniority, int birthYear) {
     // Initialize Factory
     this->initializeID(factoryPtr);
 
     // Initialize the rest of the fields
+    this->jobs = job;
     this->employer = employer;
-    this->seniority = seniority;
     this->birthYear = birthYear;
-    this->jobs = jobs;
+    this->seniority = seniority;
 }
 
 

@@ -22,6 +22,7 @@ MyImplementation::MyImplementation() {
  */
 Flight* MyImplementation::getFlight(string id) {
     return (this->flightsMap.getItem(id));
+    // TODO: need to check the files too
 }
 
 /**
@@ -32,6 +33,7 @@ Flight* MyImplementation::getFlight(string id) {
  */
 Customer* MyImplementation::getCustomer(string id) {
     return (this->customersMap.getItem(id));
+    // TODO: need to check the files too
 }
 
 /**
@@ -42,6 +44,8 @@ Customer* MyImplementation::getCustomer(string id) {
  */
 Plane* MyImplementation::getPlane(string id) {
     return (this->planesMap.getItem(id));
+
+    // TODO: need to check the files too
 }
 
 /**
@@ -52,6 +56,8 @@ Plane* MyImplementation::getPlane(string id) {
  */
 Employee* MyImplementation::getEmployee(string id) {
     return this->employeesMap.getItem(id);
+
+    // TODO: need to check the files too
 }
 
 /**
@@ -62,6 +68,8 @@ Employee* MyImplementation::getEmployee(string id) {
  */
 Reservation* MyImplementation::getReservation(string id) {
     return (this->reservationsMap.getItem(id));
+
+    // TODO: need to check the files too
 }
 
 /// ---------- SETTERS ----------
@@ -113,8 +121,8 @@ Employee* MyImplementation::addEmployee(int seniority, int birth_year, string em
  * @return a new Flight ptr.
  */
 Flight* MyImplementation::addFlight(int model_number, Date date, string source, string destination) {
-    list<Reservation*> reservations;
-    list<Employee*> employees;
+    list<Reservation*> reservations; // TODO: fill with reservations for this flight (?)
+    list<Employee*> employees; // TODO: fill this with employees
 
     // search for an available plane
     Plane* plane = this->findAvailablePlaneInSystem(model_number, date);
@@ -123,6 +131,9 @@ Flight* MyImplementation::addFlight(int model_number, Date date, string source, 
     if(plane == nullptr) {
         throw runtime_error("There are no planes available for this flight. Try changing the date or model...");
     }
+
+    // TODO: After finding a plane, we will have to check the crew needed for this Plane and look
+    // TODO:  for the crew members in the employees list. Should no crew be available, throw
 
     // An available plane was found -> create the flight.
     Flight* newFlight =

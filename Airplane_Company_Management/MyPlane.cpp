@@ -12,13 +12,13 @@
  * @param factoryPtr DescriptionFactory -- a pointer to a DescriptionFactory.
  * @param ID string -- the id of this specific MyPlane.
  * @param modelNumber int -- the model of the MyPlane.
- * @param crewJobsDescription map<Jobs, int> -- the jobs required on this airMyPlane.
+ * @param crewNeeded map<Jobs, int> -- the jobs required on this airMyPlane.
  * @param economyClassSize int -- the max seats in Economy Class.
  * @param firstClassSize int -- the max seats in First Class.
  */
 MyPlane::MyPlane(DescriptorsFactory* factoryPtr,
                  int modelNumber,
-                 map<Jobs, int>& crewJobsDescription,
+                 map<Jobs, int>& crewNeeded,
                  int economyClassSize, int firstClassSize) {
     // Initialize Descriptor
     this->initializeID(factoryPtr);
@@ -26,7 +26,7 @@ MyPlane::MyPlane(DescriptorsFactory* factoryPtr,
     /// Initialize the rest of the fields
     this->modelNumber = modelNumber;
     this->maxFirstClass = firstClassSize;
-    this->crewNeeded = crewJobsDescription;
+    this->crewNeeded = crewNeeded;
     this->maxEconomyClass = economyClassSize;
 }
 

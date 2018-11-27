@@ -12,11 +12,11 @@
  * @param factoryPtr DescriptionFactory -- a pointer to a DescriptionFactory.
  * @param costumer Customer* -- a pointer to the costumer associated with this MyReservation.
  * @param flight Flight* -- a pointer to the flight associated with this MyReservation.
- * @param classes Classes -- the classes of the MyReservation.
+ * @param cls Classes -- the classes of the MyReservation.
  * @param maxBaggage int -- the max baggage for the MyReservation.
  */
-MyReservation::MyReservation(DescriptorsFactory* factoryPtr, Customer *costumer,
-                        Flight *flight, Classes classes, int maxBaggage) {
+MyReservation::MyReservation(DescriptorsFactory* factoryPtr, Customer* costumer,
+                        Flight *flight, Classes cls, int maxBaggage) {
 
     // Initialize Descriptor
     this->initializeID(factoryPtr);
@@ -24,7 +24,7 @@ MyReservation::MyReservation(DescriptorsFactory* factoryPtr, Customer *costumer,
     // Initialize the rest of the fields
     this->costumer = costumer;
     this->flight = flight;
-    this->classes = classes;
+    this->classes = cls;
     this->maxBaggage = maxBaggage;
 }
 

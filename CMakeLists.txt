@@ -9,7 +9,7 @@ set(AIRPLANE_MANAGEMENT
         # MyImplementation
         Airplane_Company_Management/MyImplementation.cpp Airplane_Company_Management/MyImplementation.h
         # File Parsing
-        Airplane_Company_Management/File_Parsing/FileParser.h
+        Airplane_Company_Management/File_Parsing/ParseHandling.h
         # Objects List
         Airplane_Company_Management/Generic_Structures/ObjectsMap.cpp Airplane_Company_Management/Generic_Structures/ObjectsMap.h
         # Interface

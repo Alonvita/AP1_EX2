@@ -6,7 +6,7 @@
 #define AP1_OBJECTSLIST_H
 
 #include <map>
-#include "../File_Parsing/FileParser.h"
+#include "../File_Parsing/ParseHandling.h"
 #include "../interface.h"
 
 using namespace std;
@@ -14,7 +14,7 @@ using namespace std;
 template <class K, class V>
 class ObjectsMap {
 private:
-    FileParser fp;
+    ParseHandling fp;
     map<K, V> objects;
 public:
     /// ---------- CONSTRUCTORS - DESTRUCTORS ---------
