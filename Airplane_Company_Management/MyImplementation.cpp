@@ -101,6 +101,8 @@ Customer* MyImplementation::addCustomer(string full_name, int priority) {
     Customer* newCustomer = new MyCustomer(desc, full_name, priority, reservations);
 
     this->customersMap.insert(make_pair(newCustomer->getID(), newCustomer));
+
+    return newCustomer;
 }
 
 /**
@@ -141,6 +143,7 @@ Employee* MyImplementation::addEmployee(int seniority, int birth_year, string em
     // create new entry for Job->newMp
     this->employeesMap.insert(make_pair(jobTitle, newMap));
 
+    return newEmployee;
 }
 
 /**
@@ -184,6 +187,8 @@ Flight* MyImplementation::addFlight(int model_number, Date date, string source, 
 
     // Add the new object to the flights list
     this->flightsMap.insert(make_pair(newFlight->getID(), newFlight));
+
+    return newFlight;
 }
 
 /**
@@ -221,6 +226,8 @@ Plane* MyImplementation::addPlane(int model_number, map<Jobs, int> crew_needed, 
 
     // add the new object to the planes list
     this->planesMap.insert(make_pair(newPlane->getID(), newPlane));
+
+    return newPlane;
 }
 
 /**
