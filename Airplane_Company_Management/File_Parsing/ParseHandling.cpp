@@ -90,6 +90,9 @@ vector<T> ParseHandling::generateMultiple(MultipleParse target, const string& se
  * @return a new Reservation(...) object generated from file for this ID.
  */
 Reservation* ParseHandling::getReservationByReservationID(const string &rid) {
+    if(!fileExists(RESERVATIONS_FP))
+        return nullptr;
+
     // Local Variables
     ifstream file(RESERVATIONS_FP);
     vector<string> vec;
@@ -127,6 +130,9 @@ Reservation* ParseHandling::getReservationByReservationID(const string &rid) {
  * @return a Customer ptr.
  */
 Customer* ParseHandling::getCustomerByCustomerID(const string& cid) {
+    if(!fileExists(CUSTOMER_FP))
+        return nullptr;
+
     // Local Variables
     Line line;
     ifstream file(CUSTOMER_FP);
@@ -167,6 +173,9 @@ Customer* ParseHandling::getCustomerByCustomerID(const string& cid) {
  * @return a a Plane ptr that is associated with this flight.
  */
 Plane* ParseHandling::getPlaneByFlightID(const string &fid) {
+    if(!fileExists(FLIGHTS_FP))
+        return nullptr;
+
     // Local Variables
     ifstream file(FLIGHTS_FP);
     vector<string> vec;
@@ -205,6 +214,9 @@ Plane* ParseHandling::getPlaneByFlightID(const string &fid) {
  * @return a new instance of the relevant plane parsed from the file, or nullptr if doesn't exist
  */
 Plane* ParseHandling::getPlaneByPlaneID(const string &pid) {
+    if(!fileExists(PLANES_FP))
+        return nullptr;
+
     // Local Variables
     ifstream planesFile(PLANES_FP);
     vector<string> vec;
@@ -243,6 +255,9 @@ Plane* ParseHandling::getPlaneByPlaneID(const string &pid) {
  * @return an Employee ptr or nullptr if none exists.
  */
 Employee* ParseHandling::getEmployeeByEmployeeID(const string &eid) {
+    if(!fileExists(EMPLOYEE_FP))
+        return nullptr;
+
     // Local Variables
     ifstream file(EMPLOYEE_FP);
     vector<string> vec;
@@ -263,7 +278,11 @@ Employee* ParseHandling::getEmployeeByEmployeeID(const string &eid) {
             Jobs jobTitle = this->parseJobFromString(splitLine.at(1)); // Parse Job
             int seniority = stoi(splitLine.at(2)); // Seniority
             int bYear = stoi(splitLine.at(3)); // Birth Year
-            Employee* employer = getEmployeeByEmployeeID(splitLine.at(4)); // Look for Employer
+
+            // get employee or pur nullptr
+            Employee* employer =
+                    strcmp(splitLine.at(4).c_str(), "NONE") == 0 ? nullptr :
+                    getEmployeeByEmployeeID(splitLine.at(4)); // Look for Employer
 
             // return a new instance of the relevant employee
             Descriptor desc = Descriptor(eid);
@@ -281,7 +300,45 @@ Employee* ParseHandling::getEmployeeByEmployeeID(const string &eid) {
  * @param fid const string& -- a constant reference to a Flight ID.
  * @return a new Flight generated from the files.
  */
-Flight* ParseHandling::getFlightByFlightID(const string &fid) { // TODO: do this
+Flight* ParseHandling::getFlightByFlightID(const string &fid) {
+    if(!fileExists(FLIGHTS_FP))
+        return nullptr;
+
+    // Local Variables
+    ifstream flightsF(FLIGHTS_FP);
+    vector<string> vec;
+    list<Employee *> employeesForThisFlight;
+
+    string l;
+    // for each line
+    while (getline(flightsF, l)) {
+        // get istringstream of the line
+        istringstream iss(l);
+
+        // turn it into a vector separated by words
+        vector<string> splitLine(istream_iterator<string>{iss},
+                                 istream_iterator<string>());
+
+        // if Flight ID was found
+        if (strcmp(fid.c_str(), splitLine.at(0).c_str()) == 0) {
+            // generate relevant information
+            Descriptor desc = Descriptor(fid); // FLIGHT ID
+            string pid = splitLine.at(1); // PLANE ID -> get plane below
+            int modelNum = stoi(splitLine.at(2)); // MODEL NUMBER
+            Date date = splitLine.at(3);     // FLIGHT DATE
+            string src = splitLine.at(4);    // SOURCE
+            string dest = splitLine.at(5);   // DESTINATION
+
+            list<Reservation*> rList = generateReservationsByFlightID(fid);
+            list<Employee*> eList = generateEmployeesByFlightID(fid);
+            Plane* p = getPlaneByFlightID(fid);
+
+            return new MyFlight(desc, modelNum, rList, eList, date, src, dest, p);
+        }
+    }
+
+    // no flight was found -> return nullptr;
+    return nullptr;
 }
 
 ///---------- GENERATE MULTIPLE FUNCTIONS ----------
@@ -407,32 +464,36 @@ list<Reservation*> ParseHandling::generateReservationsByFlightID(const string &f
  * @param employeesMap map<Jobs, map<string, Employee *>> -- map of employees
  */
 void ParseHandling::parseEmployeesToFile(map<Jobs, map<string, Employee *>> employeesMap) {
-    stringstream ss;
 
-    for(pair<Jobs, map<string, Employee*>> p : employeesMap) {
-       Jobs job = p.first;
-       for(pair<string, Employee*> p2 : p.second) {
-           // get all relevant detains for this employee
-           string id = p2.first;
-           string employerID = p2.second->getEmployer()->getID();
-           int seniority = p2.second->getSeniority();
-           int bYear = p2.second->getBirthYear();
+    for (pair<Jobs, map<string, Employee *>> p : employeesMap) {
+        Jobs job = p.first;
+        for (pair<string, Employee *> p2 : p.second) {
+            stringstream ss;
+            // get all relevant detains for this employee
+            string id = p2.first;
 
-           string employeeLine;
+            // get employer
+            Employee *employer = p2.second->getEmployer();
+            // employerID
+            string employerID = (employer != nullptr) ? employer->getID() : "NONE";
 
-           ss << id; // ID
-           ss << SPACE;
-           ss << parseJobToString(job); // JOB TITLE
-           ss << SPACE;
-           ss << seniority; // SENIORITY
-           ss << SPACE;
-           ss << bYear; // BIRTH YEAR
-           ss << SPACE;
-           ss << employerID; // EMLOYER ID
-           ss << endl;
+            int seniority = p2.second->getSeniority();
+            int bYear = p2.second->getBirthYear();
 
-           writeStrToFile(ss.str(), EMPLOYEE_FP);
-       }
+            ss << id; // ID
+            ss << SPACE;
+            ss << parseJobToString(job); // JOB TITLE
+            ss << SPACE;
+            ss << seniority; // SENIORITY
+            ss << SPACE;
+            ss << bYear; // BIRTH YEAR
+            ss << SPACE;
+            ss << employerID; // EMLOYER ID
+            ss << endl;
+
+            writeStrToFile(ss.str(), EMPLOYEE_FP);
+            ss.clear();
+        }
     }
 }
 
@@ -465,6 +526,12 @@ void ParseHandling::parseFlightsToFile(map<string, Flight *> flightsMap) {
     stringstream ssAssign;
 
     for(pair<string, Flight*> p : flightsMap) {
+        // check if exists in files
+        Flight* f = getFlightByFlightID(p.first);
+
+        if(f != nullptr)
+            continue;
+
         ssFlight << p.first; // ID
         ssFlight << SPACE;
         ssFlight << ((MyFlight*)p.second)->getPlane()->getID(); // PLANE ID
@@ -698,8 +765,16 @@ string ParseHandling::parseJobToString(Jobs job) {
 void ParseHandling::writeStrToFile(const string &str, const string &fp) {
     ofstream outfile;
 
+    if(!fileExists(fp)){
+        outfile.open(fp.c_str());
+        outfile << str;
+        outfile.close();
+        return;
+    }
+
     outfile.open(fp, std::ios_base::app);
     outfile << str;
+    outfile.close();
 }
 
 /**
@@ -713,4 +788,15 @@ string ParseHandling::parseClassToStr(Classes cls) {
         case FIRST_CLASS: return "FIRST_CLASS";
         case SECOND_CLASS: return "SECOND_CLASS";
     }
+}
+
+/**
+ * fileExists(const string& fp)
+ *
+ * @param fp const string& -- file path.
+ * @return bool if file exists, or false otherwise.
+ */
+bool ParseHandling::fileExists(const string& fp) {
+    struct stat buf;
+    return (stat(fp.c_str(), &buf) != -1);
 }

@@ -190,8 +190,7 @@ int main() {
 
     Flight* f2 = myImplementation->addFlight(747, d, "israel", "metula");
     cout << "DEBUG: Flight Added: " << f2->getID() << endl;
-    Flight* f3 = myImplementation->addFlight(747, d, "israel", "metula");
-    cout << "DEBUG: Flight Added: " << f3->getID() << endl;
 
+    myImplementation->exit();
     //myImplementation->addResevation();
 }

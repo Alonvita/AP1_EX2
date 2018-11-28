@@ -9,16 +9,17 @@
 
 #define MODELS_FP "../DatabaseFiles/models.txt"
 #define PLANES_FP "../DatabaseFiles/planes.txt"
-#define FLIGHTS_FP "../DatabaseFiles/flights.txt"
-#define EMPLOYEE_FP "../DatabaseFiles/employees.txt"
-#define CUSTOMER_FP "../DatabaseFiles/cusomers.txt"
+#define FLIGHTS_FP "flights.txt"
+#define EMPLOYEE_FP "employee.txt"
+#define CUSTOMER_FP "../DatabaseFiles/customers.txt"
 #define RESERVATIONS_FP "../DatabaseFiles/reservations.txt"
-#define ASSIGNMENTS_FILE "../DatabaseFiles/assignments.txt"
+#define ASSIGNMENTS_FILE "assignments.txt"
 
 #include "../interface.h"
 #include "File_Parsing_Utility/Line.h"
 #include "../Descriptors/DescriptorsFactory.h"
 
+#include <sys/stat.h>
 #include <vector>
 #include <sstream>
 #include <fstream>
@@ -29,8 +30,8 @@
 
 using namespace std;
 
-enum SingleParse { FLIGHT, EMPLOYEE, CUSTOMER, RESERVATION, PLANE };
 enum MultipleParse { EMPLOYEES, RESERVATIONS, JOBS };
+enum SingleParse { FLIGHT, EMPLOYEE, CUSTOMER, RESERVATION, PLANE };
 
 class ParseHandling {
 public:
@@ -44,9 +45,6 @@ public:
 
     template <class T>
     vector<T> generateMultiple(MultipleParse target, const string& searcherID);
-
-    template <class T>
-    vector<T> generateVector(MultipleParse target, const string& searcherID);
 
     ///---------- PARSING FROM FILE ----------
     // ---- EMPLOYEE ----
@@ -77,7 +75,15 @@ public:
 
 
 private:
+    ///---------- DATA MEMBERS ----------
+    map<string, Flight*>                fMap;
+    map<string, Customer*>              cMap;
+    map<string, Reservation*>           rMap;
+    map<Jobs, map<string, Employee*>>   eMap;
+    map<int, map<string, Plane*>>       aPlanesTable;
+
     ///---------- UTILITY ----------
+    bool            fileExists(const string& fp);
     SingleParse     identifyID(const string&);
     string          parseJobToString(Jobs);
     string          parseClassToStr(Classes cls);

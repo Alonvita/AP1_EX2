@@ -243,7 +243,7 @@ Plane* MyImplementation::addPlane(int model_number, map<Jobs, int> crew_needed, 
         // create plane instance
         Plane* p = new MyPlane(desc, model_number, crew_needed, max_economy, max_first);
 
-        // insert to the map
+        // insert to the map<string, Plane*>
         it->second.insert(make_pair(p->getID(), p));
 
         return p;
@@ -261,7 +261,7 @@ Plane* MyImplementation::addPlane(int model_number, map<Jobs, int> crew_needed, 
     map<string, Plane*> mapForModel;
     mapForModel.insert(make_pair(newPlane->getID(), newPlane));
 
-    // push a new entry to the map, containing the int and the string->Plane*
+    // push a new entry to the map<int, map<string, Plane*>>
     this->availablePlanesTable.insert(make_pair(model_number, mapForModel));
 
     return newPlane;
@@ -497,6 +497,9 @@ list<Reservation*> MyImplementation::generateReservationsForFlight(string fid) {
  * exit().
  */
 void MyImplementation::exit() {
-    parseHandling.parseReservationsToFile(reservationsMap);
-    parseHandling.parsePlanesToFile(availablePlanesTable);
+    //parseHandling.parseFlightsToFile(flightsMap);
+      parseHandling.parseEmployeesToFile(employeesMap);
+ //   parseHandling.parseCustomersToFile(customersMap);
+  //  parseHandling.parsePlanesToFile(availablePlanesTable);
+   // parseHandling.parseReservationsToFile(reservationsMap);
 }
