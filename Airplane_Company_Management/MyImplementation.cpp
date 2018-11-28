@@ -174,7 +174,10 @@ Flight* MyImplementation::addFlight(int model_number, Date date, string source, 
 
     // --- GENERATE RESERVATIONS ---
     list<Reservation*> reservations = generateReservationsForFlight(newFlight->getID());
-    // TODO: After finding a plane, we will have to check the crew needed for this Plane and look
+    // add all reservations to the flight's reservations list
+    for(Reservation* r : reservations) {
+        ((MyFlight*)newFlight)->addReservation(r);
+    }
     // --- GENERATE RESERVATIONS ---
 
     // An available plane was found -> create the flight.
@@ -415,8 +418,19 @@ vector<Flight*> MyImplementation::getFlightsForEmployee(string& eid) {
  * @return a list of reservations for this flight.
  */
 list<Reservation*> MyImplementation::generateReservationsForFlight(string fid) {
+    // local variables
+    list<Reservation*> reservationsForFlight; // return value
+
+    // for each reservation in the map
+    for(pair<string, Reservation*> pair : this->reservationsMap) {
+        // if the ID of the flight for this reservation equals to the fid
+        if(strcmp(pair.second->getFlight()->getID().c_str(), fid.c_str())) {
+            reservationsForFlight.push_back(pair.second); // add to reservation list
+        }
+    }
 
     // TODO: need to check from file as well!
+    return reservationsForFlight;
 }
 
 /// ---------- EXIT ----------
