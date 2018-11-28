@@ -22,7 +22,7 @@ Descriptor::Descriptor(const string& fullID) {
  * @param identifier string -- a string representing an identifier.
  * @param ID string -- id.
  */
-Descriptor::Descriptor(string& identifier, const string& ID) {
+Descriptor::Descriptor(string& ID, const string& identifier) {
     this->identifier = identifier;
     this->ID = ID;
 }

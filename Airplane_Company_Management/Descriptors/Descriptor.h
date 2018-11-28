@@ -18,8 +18,8 @@ public:
     string  getID() override;
 
 private:
-    string identifier;
     string ID;
+    string identifier;
 };
 
 #endif //AP1_DESCRIPTOR_H
