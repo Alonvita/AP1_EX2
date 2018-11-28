@@ -7,6 +7,7 @@
 
 #include <vector>
 #include <list>
+#include <cstring>
 
 // ---- Interface ----
 #include "interface.h"
@@ -18,7 +19,6 @@
 #include "MyCustomer.h"
 #include "MyReservation.h"
 #include "Descriptors/DescriptorsFactory.h"
-#include "Generic_Structures/ObjectsMap.h"
 
 
 class MyImplementation : public Ex2 {
