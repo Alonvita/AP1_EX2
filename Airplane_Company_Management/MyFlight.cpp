@@ -22,7 +22,7 @@
  */
 MyFlight::MyFlight(DescriptorsFactory* factoryPtr, int modelNumber,
                list<Reservation *> &reservations, list<Employee *>& employeesList,
-               Date date, string& source, string& destination, Plane* plane) : flightDate(date){
+               Date date, string& source, string& destination, Plane* plane) : flightDate(date) {
     // initialize Descriptor
     this->initializeID(factoryPtr);
 

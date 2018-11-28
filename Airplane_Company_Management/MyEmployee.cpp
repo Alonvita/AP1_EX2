@@ -70,20 +70,6 @@ Employee* MyEmployee::getEmployer() {
 }
 
 /**
- * hasCrew().
- *
- * @return true if this employee has a crew, or false otherwise.
- */
-bool MyEmployee::hasCrew() {
-    return this->hasACrew;
-}
-
-/**
- * crewFound().
- */
-void MyEmployee::crewFound() { this->hasACrew = true; }
-
-/**
  * MyEmployee::getID().
  *
  * @return the the ID held by the descriptor for this object.

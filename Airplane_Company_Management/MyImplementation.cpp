@@ -290,22 +290,37 @@ Plane* MyImplementation::findAvailablePlaneInSystem(int model_number, Date date)
 /**
  * findCrewForPlane(vector<Jobs> jobs).
  *
- * @param jobs vector<Jobs> -- a vector of all the jobs needed to fill this plane with.
+ * @param crewNeeded vector<Jobs> -- a vector of all the jobs needed to fill this plane with.
+ * @param date Date -- the date that this crew is needed on.
  * @return a boolean true if a crew was found or false otherwise,
  *          followed by a list of Employees available as a crew for the plane.
  */
  template <class T>
-vector<T> MyImplementation::findCrewForPlane(vector<Jobs> jobs) {
+vector<T> MyImplementation::findCrewForFlight(vector<Jobs> crewNeeded, Date date) {
     // Local Variables
     vector<T> crew;
 
-    // push default as crew not found
-    crew.push_back(false);
+    // for every job needs to be found
+    for(Jobs j : crewNeeded) {
+        if(this->employeesMap.find(j) == this->employeesMap.end()) {
+            // job not found - set false and return
+            crew.insert(0, false);
+            return crew;
+        }
+        // reaching here means that the job was found.
+        // take the map for the job from the employeesMap
+        map<string, Employee*> employeesPerJob = this->employeesMap.at(j);
 
-    // look for available crew members
-    for() {
+        for(pair<string, Employee*> employee : employeesPerJob) {
 
+
+            // otherwise, add it and update crewFound
+
+        }
     }
+
+    // number of crew members found is equal to the crewNeeded required -> set to true
+    crew.insert(0, crew.size() = crewNeeded.size() + 1 ? true : false);
 }
 
 /// ---------- EXIT ----------

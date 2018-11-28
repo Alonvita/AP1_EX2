@@ -59,7 +59,7 @@ public:
     /// ---------- UTILITY ----------
     Plane* findAvailablePlaneInSystem(int, Date);
     template <class T>
-    vector<T> findCrewForPlane(vector<Jobs> jobs);
+    vector<T> findCrewForFlight(vector<Jobs>, Date);
 
     void exit() override;
 };
