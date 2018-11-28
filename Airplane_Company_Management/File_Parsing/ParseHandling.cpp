@@ -3,6 +3,7 @@
 //
 
 #include "ParseHandling.h"
+#include "../MyReservation.h"
 
 ///---------- FROM FILE PARSE HANDLING ----------
 /**
@@ -14,7 +15,6 @@
  */
 template <class T>
 T ParseHandling::generateSingle(SingleParse target, string searcherID) {
-    ofstream file;
     SingleParse searcherType;
 
     // open the right file, based on what we want to search
@@ -81,6 +81,69 @@ vector<T> ParseHandling::generateMultiple(MultipleParse target, string searcherI
             return generateJobsByPlaneID(searcherID);
     }
 }
+
+///---------- GENERATE SINGLES FUNCTIONS ----------
+/**
+ * getReservationFromFile(string rid).
+ *
+ * @param rid string -- reservation ID.
+ * @return a new Reservation(...) object generated from file for this ID.
+ */
+Reservation* ParseHandling::getReservationFromFile(string rid) {
+    // Local Variables
+    Line line;
+    ofstream file;
+    vector<string> vec;
+
+    // open file
+    file.open(RESERVATION_STR_IDENTIFIER);
+
+    // read lines
+    line.read_lines(cin, vec);
+
+    // for each line
+    for(string l : vec) {
+        // get istringstream of the line
+        istringstream iss(l);
+
+        // turn it into a vector separated by words
+        vector<string> splitLine(istream_iterator<string>{iss},
+                                 istream_iterator<string>());
+
+        // if the ID of the reservation is equal to this reservation
+        if(strcmp(splitLine.at(0).c_str(), rid.c_str()) == 0) {
+            // create a new reservation and return
+            // TODO: return new MyReservation();
+        }
+    }
+}
+
+Customer ParseHandling::getCustomerByCustomerID(string cid) {
+    // Local Variables
+    Line line;
+    ofstream file;
+    vector<string> vec;
+
+    // open file
+    file.open(CUSTOMER_STR_IDENTIFIER);
+
+    // read lines
+    line.read_lines(cin, vec);
+
+    // for each line
+    for(string l : vec) {
+        // get istringstream of the line
+        istringstream iss(l);
+
+        // turn it into a vector separated by words
+        vector<string> splitLine(istream_iterator<string>{iss},
+                                 istream_iterator<string>());
+
+
+    }
+}
+
+///---------- GENERATE MULTIPLE FUNCTIONS ----------
 
 ///---------- UTILITY ----------
 /**

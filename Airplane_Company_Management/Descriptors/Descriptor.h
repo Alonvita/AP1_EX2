@@ -10,6 +10,7 @@
 class Descriptor : public ID {
 public:
     /// ---------- CONSTRUCTORS - DESTRUCTORS ----------
+    Descriptor(const string&);
     Descriptor() = default;
     Descriptor(string&, const string&);
 

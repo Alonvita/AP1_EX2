@@ -6,6 +6,23 @@
 
 /// ---------- CONSTRUCTORS - DESTRUCTORS ----------
 /**
+ * MyCustomer(const string & cid, string & fullName,
+                       int priority, list<Reservation *> & reservations).
+ *
+ * @param cid const string& -- a customer ID.
+ * @param fullName string -- a string representing the MyCustomer's name.
+ * @param priority int -- the priority of this MyCustomer in line.
+ * @param reservations list<Reservation *> -- a list of reservations.
+ */
+MyCustomer::MyCustomer(const string & cid, string & fullName,
+                       int priority, list<Reservation *> & reservations) {
+    this->descriptor = Descriptor(cid);
+    this->fullName = fullName;
+    this->priority = priority;
+    this->reservationsList = reservations;
+}
+
+/**
  * MyCustomer(string ID, string fullName, int priority, list<Reservation *> &reservations).
  *
  * @param factoryPtr DescriptionFactory -- a pointer to a DescriptionFactory.

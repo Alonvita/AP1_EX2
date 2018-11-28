@@ -12,6 +12,7 @@
 class MyEmployee : public Employee {
 public:
     /// ---------- CONSTRUCTORS - DESTRUCTORS ----------
+    MyEmployee(const string&, Jobs, Employee* = nullptr, int = 0, int = 0);
     MyEmployee(DescriptorsFactory*, Jobs, Employee* = nullptr, int = 0, int = 0);
     ~MyEmployee() override;
 
@@ -27,7 +28,6 @@ public:
 
 private:
     /// ---------- PRIVATE MEMBERS ----------
-    bool        hasACrew;
     Jobs        jobs;
     Employee*   employer;
     int         seniority;

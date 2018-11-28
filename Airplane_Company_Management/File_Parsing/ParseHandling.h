@@ -12,11 +12,16 @@
 #define RESERVATIONS_FP "../DatabaseFiles/reservations.txt"
 
 #include "../interface.h"
+#include "File_Parsing_Utility/Line.h"
 #include "../Descriptors/DescriptorsFactory.h"
 
-#include <cstring>
 #include <vector>
+#include <sstream>
 #include <fstream>
+#include <cstring>
+#include <fstream>
+#include <iostream>
+#include <algorithm>
 
 using namespace std;
 

@@ -9,6 +9,24 @@
 /**
  * MyEmployee(string ID, Job job, MyEmployee* employer = nullptr, int seniority, int birthYear).
  *
+ * @param eid const string& -- a reference to a string representing an employee's ID
+ * @param ID string -- an ID as string.
+ * @param job Job -- a job.
+ * @param employer Employer* -- an MyEmployee.
+ * @param seniority int -- a seniority.
+ * @param birthYear int -- a birth year.
+ */
+MyEmployee::MyEmployee(const string &eid, Jobs job, Employee *employer, int seniority, int year) {
+    this->descriptor = Descriptor(eid);
+    this->jobs = job;
+    this->employer = employer;
+    this->birthYear = birthYear;
+    this->seniority = seniority;
+}
+
+/**
+ * MyEmployee(string ID, Job job, MyEmployee* employer = nullptr, int seniority, int birthYear).
+ *
  * @param factoryptr DescriptionFactory* -- a pointer to a DescriptionFactory.
  * @param ID string -- an ID as string.
  * @param job Job -- a job.
@@ -22,7 +40,6 @@ MyEmployee::MyEmployee(DescriptorsFactory * factoryPtr, Jobs job,
     this->initializeID(factoryPtr);
 
     // Initialize the rest of the fields
-    this->hasACrew = false; // doesn't have a crew
     this->jobs = job;
     this->employer = employer;
     this->birthYear = birthYear;

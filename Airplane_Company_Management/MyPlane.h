@@ -12,6 +12,7 @@
 class MyPlane : public Plane {
 public:
     /// ---------- CONSTRUCTORS - DESTRUCTORS ----------
+    MyPlane(const string&, int, map<Jobs, int> & , int, int);
     MyPlane(DescriptorsFactory*, int, map<Jobs, int> & , int, int);
     ~MyPlane() override;
 

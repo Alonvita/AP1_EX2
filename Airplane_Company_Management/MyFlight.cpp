@@ -6,6 +6,34 @@
 
 /// ---------- CONSTRUCTORS - DESTRUCTORS ----------
 /**
+ * MyFlight(const string & fid, int modelNumber,
+                   Date date, string & source,
+                   string & destination, Plane * plane).
+ *
+ * @param fid const string& -- a string representing flight ID.
+ * @param factoryPtr DescriptionFactory -- a pointer to a DescriptionFactory.
+ * @param modelNumber int -- the model of the Plane for the MyFlight.
+ * @param date Date -- the MyFlight date.
+ * @param source string& -- a reference to the string representing the source of the MyFlight.
+ * @param destination string& -- a reference to the string representing MyFlight's destination
+ */
+MyFlight::MyFlight(const string & fid, int modelNumber,
+                   Date date, string & source,
+                   string & destination, Plane * plane) : flightDate(date) {
+    string dateStr = date.getDate();
+
+    // initialize the rest of the fields
+    this->descriptor = Descriptor(fid);
+    this->plane         = plane;
+    this->source        = source;
+    this->flightDate    = Date(date);
+    this->destination   = destination;
+    this->modelNumber   = modelNumber;
+    this->reservations  = list<Reservation*>(); // initialize reservation list
+    this->employees     = list<Employee*>(); // initialize employee list
+}
+
+/**
  * MyFlight(int modelNumber,
                list<Reservation *> &reservations,
                list<Employee *> &employeesList,
@@ -68,7 +96,7 @@ MyFlight::MyFlight(DescriptorsFactory* factoryPtr, int modelNumber,
     this->destination   = dest;
     this->modelNumber   = modelNumber;
     this->employees     = employeesList;
-    this->reservations = list<Reservation*>;
+    this->reservations = list<Reservation*>();
 }
 
 /// ---------- INITIALIZATION ----------

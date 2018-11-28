@@ -15,6 +15,7 @@ class Reservation;
 class MyCustomer : public Customer {
 public:
     /// ---------- CONSTRUCTORS - DESTRUCTORS ----------
+    MyCustomer(const string&, string&, int, list<Reservation*>&);
     MyCustomer(DescriptorsFactory*, string&, int, list<Reservation*>&);
     ~MyCustomer() override;
 
