@@ -33,9 +33,11 @@ enum SingleParse { FLIGHT, EMPLOYEE, CUSTOMER, RESERVATION, PLANE };
 enum MultipleParse { EMPLOYEES, RESERVATIONS, JOBS };
 
 class ParseHandling {
-private:
-
 public:
+    ///---------- CONSTRUCTORS - DESTRUCTORS ----------
+    ParseHandling(){};
+    ~ParseHandling(){};
+
     ///---------- FROM FILE PARSE HANDLING ----------
     template <class T>
     T generateSingle(SingleParse target, const string& searcherID);
@@ -52,7 +54,7 @@ public:
     list<Employee*> generateEmployeesByFlightID(const string& fid);
 
     // ---- RESERVATION ----
-    Reservation* getReservationFromFile(const string& rid);
+    Reservation* getReservationByReservationID(const string &rid);
     list<Reservation*> generateReservationsByFlightID(const string& fid);
     list<Reservation*> generateReservationsByCustomerID(const string& cid);
 

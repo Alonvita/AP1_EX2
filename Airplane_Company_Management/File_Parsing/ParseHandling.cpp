@@ -26,7 +26,7 @@ T ParseHandling::generateSingle(SingleParse target, const string& searcherID) {
         case FLIGHT:
             return getFlightByFlightID(searcherID);
         case RESERVATION:
-            return getReservationFromFile(searcherID);
+            return getReservationByReservationID(searcherID);
         case CUSTOMER:
             return getCustomerByCustomerID(searcherID);
         case EMPLOYEE:
@@ -89,7 +89,7 @@ vector<T> ParseHandling::generateMultiple(MultipleParse target, const string& se
  * @param rid const string& -- reservation ID.
  * @return a new Reservation(...) object generated from file for this ID.
  */
-Reservation* ParseHandling::getReservationFromFile(const string& rid) {
+Reservation* ParseHandling::getReservationByReservationID(const string &rid) {
     // Local Variables
     ifstream file(RESERVATIONS_FP);
     vector<string> vec;

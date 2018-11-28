@@ -21,8 +21,13 @@ MyImplementation::MyImplementation() {
  * @return a pointer to the flight associated with this ID, or nullptr;
  */
 Flight* MyImplementation::getFlight(string id) {
-    return (this->flightsMap.at(id));
-    // TODO: need to check the files too
+    auto it = this->flightsMap.find(id);
+
+    if(it != this->flightsMap.end())
+        return it->second;
+
+    // else - try getting it from the file
+    return this->parseHandling.getFlightByFlightID(id);
 }
 
 /**
@@ -32,8 +37,12 @@ Flight* MyImplementation::getFlight(string id) {
  * @return a pointer to the customer associated with this ID, or nullptr.
  */
 Customer* MyImplementation::getCustomer(string id) {
-    return (this->customersMap.at(id));
-    // TODO: need to check the files too
+    auto it = customersMap.find(id);
+
+    if(it != customersMap.end())
+        return it->second;
+
+    return parseHandling.getCustomerByCustomerID(id);
 }
 
 /**
@@ -44,10 +53,12 @@ Customer* MyImplementation::getCustomer(string id) {
  */
 Plane* MyImplementation::getPlane(string id) {
     // find a plane
-    MyPlane* plane = (MyPlane*) this->planesMap.at(id);
+    auto it = planesMap.find(id);
 
-    // TODO: need to check the files too
-    return plane;
+    if(it != planesMap.end())
+        return it->second;
+
+    return this->parseHandling.getPlaneByPlaneID(id);
 }
 
 /**
@@ -61,15 +72,13 @@ Employee* MyImplementation::getEmployee(string id) {
     for(pair<Jobs, map<string,Employee*>> p : this->employeesMap) {
 
         // check if there's an employee with this ID in the maps
-        if(p.second.find(id) != p.second.end()) {
-            return p.second.at(id);
+        auto it = p.second.find(id);
+        if(it != p.second.end()) {
+            return it->second;
         }
     }
 
-    // employee was not found - return nullptr.
-    return nullptr;
-
-    // TODO: need to check the files too
+    return parseHandling.getEmployeeByEmployeeID(id);
 }
 
 /**
@@ -79,9 +88,12 @@ Employee* MyImplementation::getEmployee(string id) {
  * @return a pointer to the reservation associated with this ID, or nullptr;
  */
 Reservation* MyImplementation::getReservation(string id) {
-    return (this->reservationsMap.at(id));
+    auto it = reservationsMap.find(id);
 
-    // TODO: need to check the files too
+    if(it != reservationsMap.end())
+        return it->second;
+
+    return parseHandling.getReservationByReservationID(id);
 }
 
 /// ---------- SETTERS ----------

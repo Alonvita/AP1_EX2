@@ -18,11 +18,13 @@
 #include "MyEmployee.h"
 #include "MyCustomer.h"
 #include "MyReservation.h"
+#include "File_Parsing/ParseHandling.h"
 #include "Descriptors/DescriptorsFactory.h"
 
 
 class MyImplementation : public Ex2 {
 private:
+    ParseHandling parseHandling;
     map<int, int> availablePlanesCounter;
 
     DescriptorsFactory*               factory;
