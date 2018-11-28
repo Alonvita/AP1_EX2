@@ -39,6 +39,15 @@ void MyCustomer::initializeID(DescriptorsFactory* factoryPtr) {
 /// ---------- GETTERS & SETTERS ----------
 
 /**
+ * addReservation(Reservation*).
+ *
+ * @param reservation Reservation* -- a reservation ptr
+ */
+void MyCustomer::addReservation(Reservation* reservation) {
+    this->reservationsList.push_back(reservation);
+}
+
+/**
  * getID().
  *
  * @return the ID held by the descriptor.

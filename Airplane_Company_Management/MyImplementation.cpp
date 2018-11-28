@@ -43,9 +43,11 @@ Customer* MyImplementation::getCustomer(string id) {
  * @return a pointer to the plane associated with this ID, or nullptr;
  */
 Plane* MyImplementation::getPlane(string id) {
-    return (this->planesMap.getItem(id));
+    // find a plane
+    MyPlane* plane = (MyPlane*) this->planesMap.getItem(id);
 
     // TODO: need to check the files too
+    return plane;
 }
 
 /**
@@ -107,7 +109,18 @@ Employee* MyImplementation::addEmployee(int seniority, int birth_year, string em
     // create a new MyEmployee object
     Employee* newEmployee = new MyEmployee(this->factory, title, employer,seniority, birth_year);
 
-    this->employeesMap.addItem(newEmployee->getID(), newEmployee);
+    // make a pair
+    pair<string, Employee*> p = make_pair(newEmployee->getID(), newEmployee);
+
+    // check if Job description already exists
+
+    // TODO: check if the map inside the map is actually a good idea -
+    // TODO: the insertion made here is wrong because it doesn't check if the Job title already exists
+    // TODO: in the map
+    map<string, Employee*> tempMap;
+    tempMap.insert(p);
+
+    this->employeesMap.addItem(newEmployee->getTitle(), tempMap);
 }
 
 /**
@@ -129,7 +142,7 @@ Flight* MyImplementation::addFlight(int model_number, Date date, string source, 
 
     // in case no plane was found - throw an exception and return nullptr
     if(plane == nullptr) {
-        throw runtime_error("There are no planes available for this flight. Try changing the date or model...");
+        throw runtime_error("There are no planes available for this flight. Try a different date or model...");
     }
 
     // TODO: After finding a plane, we will have to check the crew needed for this Plane and look
@@ -160,8 +173,21 @@ Plane* MyImplementation::addPlane(int model_number, map<Jobs, int> crew_needed, 
     int max_first = max_passangers.at(FIRST_CLASS);
     int max_economy = max_passangers.at(SECOND_CLASS);
 
+    // search if the plane model is already in the system
+    for(pair<int, int> p : this->availablePlanesCounter) {
+        if(p.first == model_number) {
+            // if so - increase the counter
+            this->availablePlanesCounter.at(model_number)++;
+        }
+    }
+
+    // otherwise, create a new Plane* and a new map entry
+
     // create a new instance of the object
     Plane* newPlane = new MyPlane(this->factory, model_number, crew_needed, max_economy, max_first);
+
+    // map entry for counter + 1
+    this->availablePlanesCounter.insert(pair<int, int>(model_number, 1));
 
     // add the new object to the planes list
     this->planesMap.addItem(newPlane->getID(), newPlane);
@@ -178,11 +204,28 @@ Plane* MyImplementation::addPlane(int model_number, map<Jobs, int> crew_needed, 
  * @return a new Reservation ptr.
  */
 Reservation* MyImplementation::addResevation(string customerId, string flightId, Classes cls, int max_baggage) {
-    Reservation* newReservation = new MyReservation(
-                                    this->factory,
-                                    this->getCustomer(customerId),
-                                    this->getFlight(flightId),
-                                    cls, max_baggage);
+    // get customer
+    Customer* customer = this->getCustomer(customerId);
+    // check exists
+    if(customer == nullptr)
+        throw runtime_error("Customer doesn't exist.");
+
+    // get flight
+    Flight* f = this->getFlight(flightId);
+    // check exists
+    if(f == nullptr)
+        throw runtime_error("Flight doesn't exist.");
+
+    // create a new reservation
+    Reservation* newReservation = new MyReservation(this->factory,
+                                                    customer,
+                                                    f, cls, max_baggage);
+
+    // update Flight with the new reservation
+    ((MyFlight*)f)->addReservation(newReservation);
+
+    // update Customer with the new reservation
+    ((MyCustomer*) customer)->addReservation(newReservation);
 
     this->reservationsMap.addItem(newReservation->getID(), newReservation);
 }
@@ -199,9 +242,13 @@ Reservation* MyImplementation::addResevation(string customerId, string flightId,
 Plane* MyImplementation::findAvailablePlaneInSystem(int model_number, Date date) {
     bool booked = false;
 
+    // look if there's an available plane for this model number
+    if(this->availablePlanesCounter.find(model_number) == this->availablePlanesCounter.end())
+        return nullptr;
+
     // iterate over the map
     for(pair<string, Plane*> p : this->planesMap) {
-        MyPlane *plane = ((MyPlane *) p.second);
+        MyPlane* plane = ((MyPlane *) p.second);
 
         // check every plane model
         if (plane->getModelNumber() == model_number) {
@@ -222,7 +269,26 @@ Plane* MyImplementation::findAvailablePlaneInSystem(int model_number, Date date)
     return nullptr;
 }
 
+/**
+ * findCrewForPlane(vector<Jobs> jobs).
+ *
+ * @param jobs vector<Jobs> -- a vector of all the jobs needed to fill this plane with.
+ * @return a boolean true if a crew was found or false otherwise,
+ *          followed by a list of Employees available as a crew for the plane.
+ */
+ template <class T>
+vector<T> MyImplementation::findCrewForPlane(vector<Jobs> jobs) {
+    // Local Variables
+    vector<T> crew;
+
+    // push default as crew not found
+    crew.push_back(false);
+
+    for(Jobs j : jobs) {
+        Employee* employee =
+    }
+}
+
 /// ---------- EXIT ----------
 
-void MyImplementation::exit() {
-}
+void MyImplementation::exit() {}

@@ -11,11 +11,11 @@
 
 using namespace std;
 
-#define EMPLOYEE_STR_IDENTIFIER "EID"
 #define PLANE_STR_IDENTIFIER "PID"
-#define RESERVATION_STR_IDENTIFIER "RID"
 #define FLIGHT_STR_IDENTIFIER "FID"
 #define CUSTOMER_STR_IDENTIFIER "CID"
+#define EMPLOYEE_STR_IDENTIFIER "EID"
+#define RESERVATION_STR_IDENTIFIER "RID"
 
 class DescriptorsFactory {
 public:

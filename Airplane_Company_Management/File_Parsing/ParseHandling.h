@@ -12,23 +12,34 @@
 #define RESERVATIONS_FP "../DatabaseFiles/reservations.txt"
 
 #include "../interface.h"
+#include "../Descriptors/DescriptorsFactory.h"
 
+#include <cstring>
 #include <vector>
+#include <fstream>
+
 using namespace std;
 
-enum Parse { FLIGHT, EMPLOYEE, CUSTOMER, RESERVATION, PLANE };
+enum SingleParse { FLIGHT, EMPLOYEE, CUSTOMER, RESERVATION, PLANE };
+enum MultipleParse { EMPLOYEES, RESERVATIONS, JOBS };
 
-template <class T>
 class ParseHandling {
 private:
 
 public:
-    ///---------- PARSE HANDLING ----------
-    T generate(Parse target, string searcherID);
+    ///---------- FROM FILE PARSE HANDLING ----------
+    template <class T>
+    T generateSingle(SingleParse target, string searcherID);
+
+    template <class T>
+    vector<T> generateMultiple(MultipleParse target, string searcherID);
+
+    template <class T>
+    vector<T> generateVector(MultipleParse target, string searcherID);
 
     ///---------- PARSING FROM FILE ----------
     // ---- EMPLOYEE ----
-    Employee* getEmployeeFromFile(string eid);
+    Employee* getEmployeeByEmployeeID(string eid);
     vector<Employee*> generateEmployeesByFlightID(string fid);
 
     // ---- RESERVATION ----
@@ -36,7 +47,7 @@ public:
     vector<Reservation*> generateReservationsByFlightID(string fid);
     vector<Reservation*> generateReservationsByCustomerID(string cid);
 
-    // ---- RESERVATION ----
+    // ---- PLANES ----
     Plane* getPlaneByPlaneID(string pid);
     Plane* getPlaneByFlightID(string fid);
     vector<Jobs> generateJobsByPlaneID(string pid);
@@ -48,5 +59,9 @@ public:
     Flight* generateFlightByFlightID(string fid);
 
     ///---------- PARSING TO FILE ----------
+
+
+    ///---------- UTILITY ----------
+    SingleParse identifyID(string& id);
 };
 #endif //AP1_FROM_FILE_H

@@ -66,7 +66,7 @@ bool ObjectsMap<K, V>::addItem(K key, V value) {
  * @return a pointer to the beginning of the map
  */
 template <class K, class V>
-typename map<K, V>::iterator ObjectsMap<K, V>::begin() {
+typename multimap<K, V>::iterator ObjectsMap<K, V>::begin() {
     return this->objects.begin();
 }
 
@@ -78,6 +78,6 @@ typename map<K, V>::iterator ObjectsMap<K, V>::begin() {
  * @return a pointer to the end of the map
  */
 template <class K, class V>
-typename map<K, V>::iterator ObjectsMap<K, V>::end() {
+typename multimap<K, V>::iterator ObjectsMap<K, V>::end() {
     return this->objects.end();
 }

@@ -14,8 +14,8 @@ using namespace std;
 template <class K, class V>
 class ObjectsMap {
 private:
-    ParseHandling fp;
-    map<K, V> objects;
+//    ParseHandling<V> fp;
+    multimap<K, V> objects;
 public:
     /// ---------- CONSTRUCTORS - DESTRUCTORS ---------
     ObjectsMap() = default;
@@ -27,8 +27,8 @@ public:
     bool    addItem     (K, V);
 
     /// ---------- ITERATIONS ---------
-    typename map<K, V>::iterator end();
-    typename map<K, V>::iterator begin();
+    typename multimap<K, V>::iterator end();
+    typename multimap<K, V>::iterator begin();
 
 };
 

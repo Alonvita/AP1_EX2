@@ -19,8 +19,8 @@ public:
     void initializeID(DescriptorsFactory* factoryPtr);
 
     /// ---------- GETTERS & SETTERS ----------
-    bool            bookFlightOn(Date);
     vector<Date>    getBookedDates();
+    bool            bookFlightOn(Date);
 
     // ---- OVERRIDING ----
     string          getID() override;

@@ -24,9 +24,9 @@ MyPlane::MyPlane(DescriptorsFactory* factoryPtr,
     this->initializeID(factoryPtr);
 
     /// Initialize the rest of the fields
+    this->crewNeeded = crewNeeded;
     this->modelNumber = modelNumber;
     this->maxFirstClass = firstClassSize;
-    this->crewNeeded = crewNeeded;
     this->maxEconomyClass = economyClassSize;
 }
 

@@ -22,6 +22,8 @@ public:
     void initializeID(DescriptorsFactory*);
 
     /// ---------- GETTERS & SETTERS ----------
+    void addReservation(Reservation*);
+
     string              getID() override;
     int                 getPriority() override;
     string              getFullName() override;

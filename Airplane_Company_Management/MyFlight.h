@@ -23,6 +23,8 @@ public:
     void initializeID(DescriptorsFactory* factoryPtr);
 
     /// ---------- GETTERS & SETTERS ----------
+    void addReservation(Reservation*);
+
     string              getID() override;
     int                 getModelNumber() override;
     list<Reservation*>  getReservations() override;

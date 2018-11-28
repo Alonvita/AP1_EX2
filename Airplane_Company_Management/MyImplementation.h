@@ -20,16 +20,18 @@
 #include "Descriptors/DescriptorsFactory.h"
 #include "Generic_Structures/ObjectsMap.h"
 
-enum addType { PLANE, FLIGHT, EMPLOYEE, CUSTOMER, RESERVATION };
 
 class MyImplementation : public Ex2 {
 private:
-    DescriptorsFactory*                 factory;
-    ObjectsMap<string, Plane*>          planesMap;
-    ObjectsMap<string, Flight*>         flightsMap;
-    ObjectsMap<string, Customer*>       customersMap;
-    ObjectsMap<string, Employee*>       employeesMap;
-    ObjectsMap<string, Reservation*>    reservationsMap;
+    map<int, int> availablePlanesCounter;
+
+    DescriptorsFactory*                             factory;
+    ObjectsMap<string, Plane*>                      planesMap;
+    ObjectsMap<string, Flight*>                     flightsMap;
+    ObjectsMap<string, Customer*>                   customersMap;
+    ObjectsMap<Jobs, multimap<string, Employee*>>   employeesMap;
+    ObjectsMap<string, Reservation*>                reservationsMap;
+
 
 public:
     MyImplementation();
@@ -56,6 +58,8 @@ public:
 
     /// ---------- UTILITY ----------
     Plane* findAvailablePlaneInSystem(int, Date);
+    template <class T>
+    vector<T> findCrewForPlane(vector<Jobs> jobs);
 
     void exit() override;
 };

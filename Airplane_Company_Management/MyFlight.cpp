@@ -52,6 +52,15 @@ void MyFlight::initializeID(DescriptorsFactory* factoryPtr) {
 
 /// ---------- GETTERS & SETTERS ----------
 /**
+ * addReservation(Reservation*).
+ *
+ * @param reservation Reservation* -- a reservation ptr.
+ */
+void MyFlight::addReservation(Reservation* reservation) {
+    this->reservations.push_back(reservation);
+}
+
+/**
  * getReservations().
  *
  * @return the list of reservations for this MyFlight.
