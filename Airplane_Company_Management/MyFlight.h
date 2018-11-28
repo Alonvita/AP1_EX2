@@ -15,14 +15,11 @@ class Reservation;
 
 class MyFlight : public Flight {
 public:
-    /// ---------- CONSTRUCTORS - DESCRUCTORS ----------
-    MyFlight(const string&, int, Date, string&, string&, Plane*);
-    MyFlight(DescriptorsFactory*, int, list<Employee *>&, Date, string&, string&, Plane*);
-    MyFlight(DescriptorsFactory*, int, list<Reservation *> &, list<Employee *>&, Date, string&, string&, Plane*);
-    ~MyFlight() override;
-
-    /// ---------- INITIALIZATION ----------
-    void initializeID(DescriptorsFactory* factoryPtr);
+    /// ---------- CONSTRUCTORS - DESTRUCTORS ----------
+    MyFlight(Descriptor& desc, int modelNumber,
+             list<Reservation *> &reservations, list<Employee *>& employeesList,
+             Date date, string& source, string& destination, Plane* plane);
+    ~MyFlight(){};
 
     /// ---------- GETTERS & SETTERS ----------
     //TODO: check if relevant -> bool addBagage(int weight);
@@ -41,12 +38,12 @@ public:
 private:
     Plane*              plane;
     string              source;
-    list<Employee*>     employees;
     Date                flightDate;
     Descriptor          descriptor;
     int                 modelNumber;
     string              destination;
     list<Reservation*>  reservations;
+    list<Employee*>     assignedCrew;
     int                 currentBaggageWeight = 0;
 };
 

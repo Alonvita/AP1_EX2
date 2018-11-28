@@ -12,12 +12,8 @@
 class MyEmployee : public Employee {
 public:
     /// ---------- CONSTRUCTORS - DESTRUCTORS ----------
-    MyEmployee(const string&, Jobs, Employee* = nullptr, int = 0, int = 0);
-    MyEmployee(DescriptorsFactory*, Jobs, Employee* = nullptr, int = 0, int = 0);
+    MyEmployee(Descriptor&, Jobs, Employee* = nullptr, int = 0, int = 0);
     ~MyEmployee() override;
-
-    /// ---------- INITIALIZATION ----------
-    void initializeID(DescriptorsFactory*);
 
     /// ---------- GETTERS & SETTERS ----------
     string      getID() override;

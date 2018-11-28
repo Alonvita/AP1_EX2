@@ -4,51 +4,23 @@
 
 #include "MyCustomer.h"
 
-/// ---------- CONSTRUCTORS - DESTRUCTORS ----------
-/**
- * MyCustomer(const string & cid, string & fullName,
-                       int priority, list<Reservation *> & reservations).
- *
- * @param cid const string& -- a customer ID.
- * @param fullName string -- a string representing the MyCustomer's name.
- * @param priority int -- the priority of this MyCustomer in line.
- */
-MyCustomer::MyCustomer(const string & cid, string & fullName, int priority) {
-    this->descriptor = Descriptor(cid);
-    this->fullName = fullName;
-    this->priority = priority;
-    this->reservationsList = list<Reservation*>();
-}
+/// ---------- CONSTRUCTORS - DESTRUCTORS --------
 
 /**
  * MyCustomer(string ID, string fullName, int priority, list<Reservation *> &reservations).
  *
- * @param factoryPtr DescriptionFactory -- a pointer to a DescriptionFactory.
+ * @param desc Descriptor& -- a reference to a customer descriptor.
  * @param fullName string -- a string representing the MyCustomer's name.
  * @param priority int -- the priority of this MyCustomer in line.
  * @param reservations list<Reservation *> -- a list of reservations.
  */
-MyCustomer::MyCustomer(DescriptorsFactory* factoryPtr,
+MyCustomer::MyCustomer(Descriptor& desc,
                        string& fullName, int priority,
                        list<Reservation *> &reservations) {
-    // Initialize ID
-    this->initializeID(factoryPtr);
-
-    // Initialize the rest of the fields
+    this->descriptor = desc;
     this->fullName = fullName;
     this->priority = priority;
     this->reservationsList = reservations;
-}
-
-/// ---------- INITIALIZATION ----------
-
-/**
- * initializeID(DescriptorsFactory* factoryPtr).
- *
- * @param factoryPtr DescriptorsFactory* -- a pointer to a descriptor factory.
- */
-void MyCustomer::initializeID(DescriptorsFactory* factoryPtr) {
-    this->descriptor = factoryPtr->giveEmployeeDescriptor();
 }
 
 /// ---------- GETTERS & SETTERS ----------

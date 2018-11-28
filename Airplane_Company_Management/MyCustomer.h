@@ -15,12 +15,10 @@ class Reservation;
 class MyCustomer : public Customer {
 public:
     /// ---------- CONSTRUCTORS - DESTRUCTORS ----------
-    MyCustomer(const string&, string&, int);
-    MyCustomer(DescriptorsFactory*, string&, int, list<Reservation*>&);
-    ~MyCustomer() override;
-
-    /// ---------- INITIALIZATION ----------
-    void initializeID(DescriptorsFactory*);
+    MyCustomer(Descriptor& desc,
+               string& fullName, int priority,
+               list<Reservation *> &reservations);
+    ~MyCustomer(){};
 
     /// ---------- GETTERS & SETTERS ----------
     void addReservation(Reservation*);

@@ -12,12 +12,11 @@
 class MyPlane : public Plane {
 public:
     /// ---------- CONSTRUCTORS - DESTRUCTORS ----------
-    MyPlane(const string&, int, map<Jobs, int> & , int, int);
-    MyPlane(DescriptorsFactory*, int, map<Jobs, int> & , int, int);
-    ~MyPlane() override;
-
-    /// ---------- INITIALIZATION ----------
-    void initializeID(DescriptorsFactory* factoryPtr);
+    MyPlane(Descriptor& desc,
+            int modelNumber,
+            map<Jobs, int>& crewNeeded,
+            int economyClassSize, int firstClassSize);
+    ~MyPlane(){};
 
     /// ---------- GETTERS & SETTERS ----------
     vector<Date>    getBookedDates();

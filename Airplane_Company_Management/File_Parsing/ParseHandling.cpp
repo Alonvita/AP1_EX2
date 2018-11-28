@@ -24,7 +24,7 @@ T ParseHandling::generateSingle(SingleParse target, const string& searcherID) {
     // open the right file, based on what we want to search
     switch (target) {
         case FLIGHT:
-            obj = generateFlightByFlightID(searcherID);
+            obj = getFlightByFlightID(searcherID);
             break;
         case RESERVATION:
             obj = getReservationFromFile(searcherID);
@@ -62,7 +62,7 @@ T ParseHandling::generateSingle(SingleParse target, const string& searcherID) {
 }
 
 /**
- * generateMultiple(SingleParse target, const string& searcherID).
+ * generateMultiple(MultipleParse target, const string& searcherID).
  *
  * @param target MultipleParse -- an enum representing the type of item to look for.
  * @param searcherID const string& -- id to search by.
@@ -84,9 +84,6 @@ vector<T> ParseHandling::generateMultiple(MultipleParse target, const string& se
 
         case EMPLOYEES:
             return generateEmployeesByFlightID(searcherID);
-
-        case JOBS:
-            return generateJobsByPlaneID(searcherID);
     }
 }
 
@@ -99,18 +96,12 @@ vector<T> ParseHandling::generateMultiple(MultipleParse target, const string& se
  */
 Reservation* ParseHandling::getReservationFromFile(const string& rid) {
     // Local Variables
-    Line line;
-    ofstream file;
+    ifstream file(RESERVATIONS_FP);
     vector<string> vec;
 
-    // open file
-    file.open(RESERVATIONS_FP);
-
-    // read lines
-    line.read_lines(cin, vec);
-
+    string l;
     // for each line
-    for(string l : vec) {
+    while(getline(file, l)) {
         // get istringstream of the line
         istringstream iss(l);
 
@@ -128,7 +119,8 @@ Reservation* ParseHandling::getReservationFromFile(const string& rid) {
 
 
             // create a new reservation and return
-            return new MyReservation(rid, customer, flight, cls, maxBaggage);
+            Descriptor desc = Descriptor(rid);
+            return new MyReservation(desc, customer, flight, cls, maxBaggage);
         }
     }
 }
@@ -142,17 +134,12 @@ Reservation* ParseHandling::getReservationFromFile(const string& rid) {
 Customer* ParseHandling::getCustomerByCustomerID(const string& cid) {
     // Local Variables
     Line line;
-    ofstream file;
+    ifstream file(CUSTOMER_FP);
     vector<string> vec;
 
-    // open file
-    file.open(CUSTOMER_FP);
-
-    // read lines
-    line.read_lines(cin, vec);
-
+    string l;
     // for each line
-    for(string l : vec) {
+    while(getline(file, l)) {
         // get istringstream of the line
         istringstream iss(l);
 
@@ -161,12 +148,13 @@ Customer* ParseHandling::getCustomerByCustomerID(const string& cid) {
                                  istream_iterator<string>());
 
         // create a new Customer
-        auto customer = new MyCustomer(cid, splitLine.at(1), stoi(splitLine.at(2)));
+        Descriptor desc = Descriptor(cid);
 
         // add all reservations found associated with this customer
-        for(Reservation* r : this->generateReservationsByCustomerID(cid)) {
-            customer->addReservation(r);
-        }
+        list<Reservation*> rList = this->generateReservationsByCustomerID(cid);
+
+
+        auto customer = new MyCustomer(desc, splitLine.at(1), stoi(splitLine.at(2)), rList);
     }
 }
 
@@ -178,19 +166,13 @@ Customer* ParseHandling::getCustomerByCustomerID(const string& cid) {
  */
 Plane* ParseHandling::getPlaneByFlightID(const string &fid) {
     // Local Variables
-    Line line;
-    ofstream file;
+    ifstream file(FLIGHTS_FP);
     vector<string> vec;
     string pid;
 
-    // open file
-    file.open(FLIGHTS_FP);
-
-    // read lines
-    line.read_lines(cin, vec);
-
+    string l;
     // for each line
-    for(string l : vec) {
+    while(getline(file, l)) {
         // get istringstream of the line
         istringstream iss(l);
 
@@ -222,18 +204,12 @@ Plane* ParseHandling::getPlaneByFlightID(const string &fid) {
  */
 Plane* ParseHandling::getPlaneByPlaneID(const string &pid) {
     // Local Variables
-    Line line;
-    ofstream planesFile;
+    ifstream planesFile(PLANES_FP);
     vector<string> vec;
 
-    // open planesFile
-    planesFile.open(PLANES_FP);
-
-    // read lines
-    line.read_lines(cin, vec);
-
+    string l;
     // for each line
-    for(string l : vec) {
+    while(getline(planesFile, l)) {
         // get istringstream of the line
         istringstream iss(l);
 
@@ -249,7 +225,8 @@ Plane* ParseHandling::getPlaneByPlaneID(const string &pid) {
             int maxFirst = stoi(splitLine.at(2)); // get max first size
             int maxEconomy = stoi(splitLine.at(3)); // get max economy size
 
-            return new MyPlane(pid, modelNumber, crewNeeded, maxEconomy, maxFirst);
+            Descriptor desc = Descriptor(pid);
+            return new MyPlane(desc, modelNumber, crewNeeded, maxEconomy, maxFirst);
         }
     }
 
@@ -265,18 +242,12 @@ Plane* ParseHandling::getPlaneByPlaneID(const string &pid) {
  */
 Employee* ParseHandling::getEmployeeByEmployeeID(const string &eid) {
     // Local Variables
-    Line line;
-    ofstream planesFile;
+    ifstream file(EMPLOYEE_FP);
     vector<string> vec;
 
-    // open planesFile
-    planesFile.open(EMPLOYEE_FP);
-
-    // read lines
-    line.read_lines(cin, vec);
-
+    string l;
     // for each line
-    for(string l : vec) {
+    while(getline(file, l)) {
         // get istringstream of the line
         istringstream iss(l);
 
@@ -293,7 +264,8 @@ Employee* ParseHandling::getEmployeeByEmployeeID(const string &eid) {
             Employee* employer = getEmployeeByEmployeeID(splitLine.at(4)); // Look for Employer
 
             // return a new instance of the relevant employee
-            return new MyEmployee(eid, jobTitle, employer, seniority, bYear);
+            Descriptor desc = Descriptor(eid);
+            return new MyEmployee(desc, jobTitle, employer, seniority, bYear);
         }
     }
 
@@ -301,7 +273,130 @@ Employee* ParseHandling::getEmployeeByEmployeeID(const string &eid) {
     return nullptr;
 }
 
+/**
+ * getFlightByFlightID(const string &fid).
+ *
+ * @param fid const string& -- a constant reference to a Flight ID.
+ * @return a new Flight generated from the files.
+ */
+Flight* ParseHandling::getFlightByFlightID(const string &fid) { // TODO: do this
+}
+
 ///---------- GENERATE MULTIPLE FUNCTIONS ----------
+
+/**
+ * generateEmployeesByFlightID(const string &fid).
+ *
+ * @param fid const string& -- a constant reference to a Flight ID.
+ * @return a list of employees associated to this flight.
+ */
+list<Employee*> ParseHandling::generateEmployeesByFlightID(const string &fid) {
+    // Local Variables
+    ifstream planesFile(ASSIGNMENTS_FILE);
+    vector<string> vec;
+    list<Employee *> employeesForThisFlight;
+
+    string l;
+    // for each line
+    while (getline(planesFile, l)) {
+        // get istringstream of the line
+        istringstream iss(l);
+
+        // turn it into a vector separated by words
+        vector<string> splitLine(istream_iterator<string>{iss},
+                                 istream_iterator<string>());
+
+        // if Flight ID was found
+        if (strcmp(fid.c_str(), splitLine.at(0).c_str()) == 0) {
+            // generate the employee from the employees file
+            Employee *tempE = getEmployeeByEmployeeID(splitLine.at(1));
+
+            employeesForThisFlight.push_back(tempE);
+        }
+    }
+
+    // return the generated list.
+    return employeesForThisFlight;
+}
+
+/**
+ * generateReservationsByCustomerID(const string &cid).
+ *
+ * @param cid const string& -- a constant reference to a Customer ID.
+ * @return a list of reservations associated to this cutomer.
+ */
+list<Reservation*> ParseHandling::generateReservationsByCustomerID(const string &cid) {
+    // Local Variables
+    ifstream planesFile(RESERVATIONS_FP);
+    vector<string> vec;
+    list<Reservation*> reservationsForCustomer;
+
+    string l;
+    // for each line
+    while (getline(planesFile, l)) {
+        // get istringstream of the line
+        istringstream iss(l);
+
+        // turn it into a vector separated by words
+        vector<string> splitLine(istream_iterator<string>{iss},
+                                 istream_iterator<string>());
+
+        // check if the Customer ID on this reservation is equal to cid
+        string cidForRes = splitLine.at(1);
+        if (strcmp(cid.c_str(), cidForRes.c_str()) == 0) {
+            // if so, get all relevant information
+            Descriptor desc = Descriptor(splitLine.at(0));
+            Customer* customer = getCustomerByCustomerID(cid);
+            Flight* flight = getFlightByFlightID(splitLine.at(2));
+            Classes cls = parseStringToClass(splitLine.at(3));
+            int maxBaggage = stoi(splitLine.at(4));
+
+            // create the new class and push it into the list
+            reservationsForCustomer.push_back(
+                    new MyReservation(desc, customer,flight, cls, maxBaggage));
+        }
+    }
+}
+
+/**
+ * generateReservationsByFlightID(const string &fid).
+ *
+ * @param fid cost string& -- a constant reference to a Flight ID.
+ * @return a list of reservations associated with this flight.
+ */
+list<Reservation*> ParseHandling::generateReservationsByFlightID(const string &fid) {
+    // Local Variables
+    ifstream planesFile(RESERVATIONS_FP);
+    vector<string> vec;
+    list<Reservation *> reservationsForFlight;
+
+    string l;
+    // for each line
+    while (getline(planesFile, l)) {
+        // get istringstream of the line
+        istringstream iss(l);
+
+        // turn it into a vector separated by words
+        vector<string> splitLine(istream_iterator<string>{iss},
+                                 istream_iterator<string>());
+
+        // check if the Flight ID on this reservation is equal to fid
+        string cidForRes = splitLine.at(2);
+        if (strcmp(fid.c_str(), cidForRes.c_str()) == 0) {
+            // if so, gather all relevant information
+            // if so, get all relevant information
+            Descriptor desc = Descriptor(splitLine.at(0));
+            Customer *customer = getCustomerByCustomerID(splitLine.at(1));
+            Flight *flight = getFlightByFlightID(fid);
+            Classes cls = parseStringToClass(splitLine.at(3));
+            int maxBaggage = stoi(splitLine.at(4));
+
+            // create the new class and push it into the list
+            reservationsForFlight.push_back(
+                    new MyReservation(desc, customer, flight, cls, maxBaggage));
+        }
+    }
+}
 
 ///---------- UTILITY ----------
 /**
@@ -350,6 +445,66 @@ Classes ParseHandling::parseStringToClass(const string& cls) {
         return SECOND_CLASS;
 
     throw runtime_error("Error parsing class from file");
+}
+
+/**
+ * parseCrewNeededForPlane(int modelID).
+ *
+ * @param modelID int -- the model of the plane
+ * @return
+ */
+map<Jobs, int> ParseHandling::parseCrewNeededForPlane(int model) {
+    // Local Variables
+    ifstream file(MODELS_FP);
+    vector<string> vec;
+
+    // initialize crewNeeded map
+    map<Jobs, int> crewNeeded;
+
+    auto it = vec.begin();
+
+    string l;
+    // for each line
+    while(getline(file, l)) {
+        // get istringstream of the line
+        istringstream iss(l);
+
+        // turn it into a vector separated by words
+        vector<string> splitLine(istream_iterator<string>{iss},
+                                 istream_iterator<string>());
+        // MODEL
+        if (strcmp(splitLine.at(0).c_str(), "MODEL") == 0) {
+            // check number
+            if(stoi(splitLine.at(1)) == model) {
+                // iterate over all lines that hold JOB [NUMBER] (until meeting the next MODEL)
+                while(getline(file, l)) {
+                    // reached next MODEL -> break
+                    if(strcmp(splitLine.at(0).c_str(), "MODEL") == 0)
+                        break;
+
+                    // get the iss of the current row
+                    istringstream iss1(l);
+
+                    // split to vector
+                    vector<string> spliteLine2(
+                            istream_iterator<string>{iss1},
+                            istream_iterator<string>());
+
+                    // parse the Job and convert the amount of assignedCrew needed for the job
+                    Jobs parsedJob = parseJobFromString(spliteLine2.at(0));
+                    int employeesNeeded = stoi(spliteLine2.at(1));
+
+                    // add new entry to the map
+                    crewNeeded.insert(make_pair(parsedJob, employeesNeeded));
+                }
+                // reaching here means that a crew was filled in the map - return it
+                return crewNeeded;
+            }
+        }
+    }
+
+    // map will be empty should we reach here
+    throw runtime_error("This model does not exist in our system.");
 }
 
 /**

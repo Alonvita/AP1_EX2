@@ -29,7 +29,7 @@ Flight* MyImplementation::getFlight(string id) {
  * getCustomer(string id).
  *
  * @param id string -- a customer ID.
- * @return a pointer to the customer associated with this ID, or nullptr;
+ * @return a pointer to the customer associated with this ID, or nullptr.
  */
 Customer* MyImplementation::getCustomer(string id) {
     return (this->customersMap.at(id));
@@ -97,7 +97,8 @@ Customer* MyImplementation::addCustomer(string full_name, int priority) {
     list<Reservation*> reservations;
 
     // create a new object
-    Customer* newCustomer = new MyCustomer(this->factory, full_name, priority, reservations);
+    Descriptor desc = this->factory->giveCustomerDescriptor();
+    Customer* newCustomer = new MyCustomer(desc, full_name, priority, reservations);
 
     this->customersMap.insert(make_pair(newCustomer->getID(), newCustomer));
 }
@@ -117,7 +118,8 @@ Employee* MyImplementation::addEmployee(int seniority, int birth_year, string em
     Employee* employer = this->getEmployee(employer_id);
 
     // create a new MyEmployee object
-    Employee* newEmployee = new MyEmployee(this->factory, title, employer,seniority, birth_year);
+    Descriptor desc = this->factory->giveEmployeeDescriptor();
+    Employee* newEmployee = new MyEmployee(desc, title, employer,seniority, birth_year);
 
     // make a pair
     pair<string, Employee*> p = make_pair(newEmployee->getID(), newEmployee);
@@ -168,16 +170,13 @@ Flight* MyImplementation::addFlight(int model_number, Date date, string source, 
     // --- GENERATE CREW ---
 
     // create a flight with an empty reservation list
-    Flight* newFlight =
-            new MyFlight(this->factory, model_number, employees,
-                         date, source, destination, plane);
+    Descriptor desc = this->factory->giveFlightDescriptor();
 
     // --- GENERATE RESERVATIONS ---
-    list<Reservation*> reservations = generateReservationsForFlight(newFlight->getID());
+    list<Reservation*> reservations = generateReservationsForFlight(desc.getID());
     // add all reservations to the flight's reservations list
-    for(Reservation* r : reservations) {
-        ((MyFlight*)newFlight)->addReservation(r);
-    }
+    Flight* newFlight = new MyFlight(desc, model_number, reservations, employees, date, source, destination, plane);
+
     // --- GENERATE RESERVATIONS ---
 
     // An available plane was found -> create the flight.
@@ -213,7 +212,9 @@ Plane* MyImplementation::addPlane(int model_number, map<Jobs, int> crew_needed, 
     // otherwise, create a new Plane* and a new map entry
 
     // create a new instance of the object
-    Plane* newPlane = new MyPlane(this->factory, model_number, crew_needed, max_economy, max_first);
+    Descriptor desc = this->factory->givePlaneDescriptor();
+
+    Plane* newPlane = new MyPlane(desc, model_number, crew_needed, max_economy, max_first);
 
     // map entry for counter + 1
     this->availablePlanesCounter.insert(pair<int, int>(model_number, 1));
@@ -260,9 +261,8 @@ Reservation* MyImplementation::addResevation(string customerId, string flightId,
     //TODO: need to check the max_baggage issue...
 
     // create a new reservation
-    Reservation* newReservation = new MyReservation(this->factory,
-                                                    customer,
-                                                    f, cls, max_baggage);
+    Descriptor desc = this->factory->giveReservationDescriptor();
+    Reservation* newReservation = new MyReservation(desc, customer, f, cls, max_baggage);
 
     // update Flight with the new reservation
     ((MyFlight*)f)->addReservation(newReservation);
@@ -410,7 +410,7 @@ vector<Flight*> MyImplementation::getFlightsForEmployee(string& eid) {
     for(pair<string, Flight*> flights : this->flightsMap) {
         // for every employee in the crew, check if he is assigned to this flight
         for(Employee* employee : flights.second->getAssignedCrew()) {
-            // if one of the employees is this employee
+            // if one of the assignedCrew is this employee
             if(strcmp(employee->getID().c_str(), eid.c_str()) == 0) {
                 // add it to the flight
                 flightsAssociatedToEmployee.push_back(flights.second);

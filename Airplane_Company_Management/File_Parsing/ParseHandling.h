@@ -11,6 +11,7 @@
 #define EMPLOYEE_FP "../DatabaseFiles/employees.txt"
 #define CUSTOMER_FP "../DatabaseFiles/cusomers.txt"
 #define RESERVATIONS_FP "../DatabaseFiles/reservations.txt"
+#define ASSIGNMENTS_FILE "../DatabaseFiles/assignments.txt"
 
 #include "../interface.h"
 #include "File_Parsing_Utility/Line.h"
@@ -46,31 +47,30 @@ public:
     ///---------- PARSING FROM FILE ----------
     // ---- EMPLOYEE ----
     Employee* getEmployeeByEmployeeID(const string& eid);
-    vector<Employee*> generateEmployeesByFlightID(const string& fid);
+    list<Employee*> generateEmployeesByFlightID(const string& fid);
 
     // ---- RESERVATION ----
     Reservation* getReservationFromFile(const string& rid);
-    vector<Reservation*> generateReservationsByFlightID(const string& fid);
-    vector<Reservation*> generateReservationsByCustomerID(const string& cid);
+    list<Reservation*> generateReservationsByFlightID(const string& fid);
+    list<Reservation*> generateReservationsByCustomerID(const string& cid);
 
     // ---- PLANES ----
     Plane* getPlaneByPlaneID(const string& pid);
     Plane* getPlaneByFlightID(const string& fid);
-    vector<Jobs> generateJobsByPlaneID(const string& pid);
 
     // ---- CUSTOMER ----
     Customer* getCustomerByCustomerID(const string& cid);
 
     // ---- FLIGHT ----
-    Flight* generateFlightByFlightID(const string& fid);
+    Flight* getFlightByFlightID(const string &fid);
 
     ///---------- PARSING TO FILE ----------
 
 
     ///---------- UTILITY ----------
-    SingleParse identifyID(const string& id);
-    Jobs parseJobFromString(const string& jobStr);
-    Classes parseStringToClass(const string& cls);
-    map<Jobs, int> parseCrewNeededForPlane(int modelID);
+    SingleParse identifyID(const string&);
+    Jobs parseJobFromString(const string&);
+    Classes parseStringToClass(const string&);
+    map<Jobs, int> parseCrewNeededForPlane(int);
 };
 #endif //AP1_FROM_FILE_H

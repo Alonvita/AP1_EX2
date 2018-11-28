@@ -7,61 +7,30 @@
 /// ---------- CONSTRUCTORS - DESTRUCTORS ----------
 
 /**
- * MyPlane(const string& pid, int modelNumber,
+ * MyPlane(Descriptor& desc,
+                 int modelNumber,
                  map<Jobs, int>& crewNeeded,
-                 int economyClassSize, int firstClassSize)
+                 int economyClassSize, int firstClassSize).
  *
- * @param pid const string& -- a plane ID.
- * @param factoryPtr DescriptionFactory -- a pointer to a DescriptionFactory.
+ * @param desc Descriptor& -- a reference to a plane descriptor.
  * @param ID string -- the id of this specific MyPlane.
  * @param modelNumber int -- the model of the MyPlane.
  * @param crewNeeded map<Jobs, int> -- the jobs required on this airMyPlane.
  * @param economyClassSize int -- the max seats in Economy Class.
  * @param firstClassSize int -- the max seats in First Class.
  */
-MyPlane::MyPlane(const string& pid, int modelNumber,
-                 map<Jobs, int>& crewNeeded, int economyClassSize, int firstClassSize) {
-    this->descriptor = Descriptor(pid);
-    this->crewNeeded = crewNeeded;
-    this->modelNumber = modelNumber;
-    this->maxFirstClass = firstClassSize;
-    this->maxEconomyClass = economyClassSize;
-}
-
-/**
- * MyPlane(string ID, int modelNumber, map<Jobs, int> crewJobsDescription = nullptr, int economyClassSize, int firstClassSize).
- *
- * @param factoryPtr DescriptionFactory -- a pointer to a DescriptionFactory.
- * @param ID string -- the id of this specific MyPlane.
- * @param modelNumber int -- the model of the MyPlane.
- * @param crewNeeded map<Jobs, int> -- the jobs required on this airMyPlane.
- * @param economyClassSize int -- the max seats in Economy Class.
- * @param firstClassSize int -- the max seats in First Class.
- */
-MyPlane::MyPlane(DescriptorsFactory* factoryPtr,
+MyPlane::MyPlane(Descriptor& desc,
                  int modelNumber,
                  map<Jobs, int>& crewNeeded,
                  int economyClassSize, int firstClassSize) {
-    // Initialize Descriptor
-    this->initializeID(factoryPtr);
-
     /// Initialize the rest of the fields
+    this->descriptor = desc;
     this->crewNeeded = crewNeeded;
     this->modelNumber = modelNumber;
     this->maxFirstClass = firstClassSize;
     this->maxEconomyClass = economyClassSize;
 }
 
-/// ---------- INITIALIZATION ----------
-
-/**
- * initializeID(DescriptorsFactory* factoryPtr).
- *
- * @param factoryPtr DescriptorsFactory* -- a pointer to a descriptor factory.
- */
-void MyPlane::initializeID(DescriptorsFactory* factoryPtr) {
-    this->descriptor = factoryPtr->givePlaneDescriptor();
-}
 
 /// ---------- GETTERS & SETTERS ----------
 

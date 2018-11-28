@@ -17,12 +17,9 @@ class Customer;
 class MyReservation : public Reservation {
 public:
     /// ---------- CONSTRUCTORS - DESTRUCTORS ----------
-    MyReservation(const string&, Customer*, Flight*, Classes, int);
-    MyReservation(DescriptorsFactory*, Customer*, Flight*, Classes, int);
-    ~MyReservation() override;
-
-    /// ---------- INITIALIZATION ----------
-    void initializeID(DescriptorsFactory* factoryPtr);
+    MyReservation(Descriptor& desc, Customer* costumer,
+                  Flight *flight, Classes cls, int maxBaggage);
+    ~MyReservation(){};
 
     /// ---------- GETTERS & SETTERS----------
     string      getID() override;
@@ -32,11 +29,11 @@ public:
     Customer*   getCustomer() override;
 
 private:
-    Descriptor  descriptor;
-    int         maxBaggage;
     Classes     cls;
     Flight*     flight;
     Customer*   costumer;
+    Descriptor  descriptor;
+    int         maxBaggage;
 };
 
 #endif //AP1_RESERVATION_H
