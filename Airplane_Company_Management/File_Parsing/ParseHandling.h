@@ -69,12 +69,14 @@ public:
     Flight* getFlightByFlightID(const string &fid);
 
     ///---------- PARSING TO FILE ----------
-    void parsePlanesToFile(map<string, Plane*> planesMap);
     void parseFlightsToFile(map<string, Flight*> flightsMap);
     void parseCustomersToFile(map<string, Customer*> customersMap);
+    void parsePlanesToFile(map<int, map<string, Plane *>> planesMap);
     void parseEmployeesToFile(map<Jobs, map<string, Employee*>> employeesMap);
     void parseReservationsToFile(map<string, Reservation*> reservationsMap);
 
+
+private:
     ///---------- UTILITY ----------
     SingleParse     identifyID(const string&);
     string          parseJobToString(Jobs);

@@ -493,4 +493,10 @@ list<Reservation*> MyImplementation::generateReservationsForFlight(string fid) {
 
 /// ---------- EXIT ----------
 
-void MyImplementation::exit() {}
+/**
+ * exit().
+ */
+void MyImplementation::exit() {
+    parseHandling.parseReservationsToFile(reservationsMap);
+    parseHandling.parsePlanesToFile(availablePlanesTable);
+}

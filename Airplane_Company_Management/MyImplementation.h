@@ -40,7 +40,7 @@ private:
 public:
     MyImplementation();
     // TODO: change destructor to use ToFile for saving data before exit
-    ~MyImplementation(){};
+    ~MyImplementation(){ exit(); };
 
     /// ---------- GETTERS ----------
     Plane*          getPlane        (string id) override;

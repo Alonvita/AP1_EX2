@@ -491,24 +491,26 @@ void ParseHandling::parseFlightsToFile(map<string, Flight *> flightsMap) {
 }
 
 /**
- * parsePlanesToFile(map<string, Plane *> planesMap).
+ * parsePlanesToFile(map<int, map<string, Plane *>> planesMap).
  *
- * @param planesMap map<string, Plane *> -- planes map.
+ * @param planesMap map<int, map<string, Plane *>> -- planes map.
  */
-void ParseHandling::parsePlanesToFile(map<string, Plane *> planesMap) {
+void ParseHandling::parsePlanesToFile(map<int, map<string, Plane *>> planesMap) {
     stringstream ss;
 
-    for (pair<string, Plane *> p : planesMap) {
-        ss << p.first; // ID
-        ss << SPACE;
-        ss << p.second->getModelNumber(); // MODEL NUMBER
-        ss << SPACE;
-        ss << p.second->getMaxFirstClass(); // MAX FIRST
-        ss << SPACE;
-        ss << p.second->getMaxEconomyClass(); // MAX ECONOMY
-        ss << endl;
+    for (pair<int, map<string, Plane*>> mapP : planesMap) {
+        for(pair<string, Plane*> p : mapP.second) {
+            ss << p.first; // ID
+            ss << SPACE;
+            ss << p.second->getModelNumber(); // MODEL NUMBER
+            ss << SPACE;
+            ss << p.second->getMaxFirstClass(); // MAX FIRST
+            ss << SPACE;
+            ss << p.second->getMaxEconomyClass(); // MAX ECONOMY
+            ss << endl;
 
-        writeStrToFile(ss.str(), PLANES_FP);
+            writeStrToFile(ss.str(), PLANES_FP);
+        }
     }
 }
 
