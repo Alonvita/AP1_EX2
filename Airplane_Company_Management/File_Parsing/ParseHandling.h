@@ -5,6 +5,7 @@
 #ifndef AP1_FROM_FILE_H
 #define AP1_FROM_FILE_H
 
+#define MODELS_FP "../DatabaseFiles/models.txt"
 #define PLANES_FP "../DatabaseFiles/planes.txt"
 #define FLIGHTS_FP "../DatabaseFiles/flights.txt"
 #define EMPLOYEE_FP "../DatabaseFiles/employees.txt"
@@ -34,39 +35,42 @@ private:
 public:
     ///---------- FROM FILE PARSE HANDLING ----------
     template <class T>
-    T generateSingle(SingleParse target, string searcherID);
+    T generateSingle(SingleParse target, const string& searcherID);
 
     template <class T>
-    vector<T> generateMultiple(MultipleParse target, string searcherID);
+    vector<T> generateMultiple(MultipleParse target, const string& searcherID);
 
     template <class T>
-    vector<T> generateVector(MultipleParse target, string searcherID);
+    vector<T> generateVector(MultipleParse target, const string& searcherID);
 
     ///---------- PARSING FROM FILE ----------
     // ---- EMPLOYEE ----
-    Employee* getEmployeeByEmployeeID(string eid);
-    vector<Employee*> generateEmployeesByFlightID(string fid);
+    Employee* getEmployeeByEmployeeID(const string& eid);
+    vector<Employee*> generateEmployeesByFlightID(const string& fid);
 
     // ---- RESERVATION ----
-    Reservation* getReservationFromFile(string rid);
-    vector<Reservation*> generateReservationsByFlightID(string fid);
-    vector<Reservation*> generateReservationsByCustomerID(string cid);
+    Reservation* getReservationFromFile(const string& rid);
+    vector<Reservation*> generateReservationsByFlightID(const string& fid);
+    vector<Reservation*> generateReservationsByCustomerID(const string& cid);
 
     // ---- PLANES ----
-    Plane* getPlaneByPlaneID(string pid);
-    Plane* getPlaneByFlightID(string fid);
-    vector<Jobs> generateJobsByPlaneID(string pid);
+    Plane* getPlaneByPlaneID(const string& pid);
+    Plane* getPlaneByFlightID(const string& fid);
+    vector<Jobs> generateJobsByPlaneID(const string& pid);
 
     // ---- CUSTOMER ----
-    Customer getCustomerByCustomerID(string cid);
+    Customer* getCustomerByCustomerID(const string& cid);
 
     // ---- FLIGHT ----
-    Flight* generateFlightByFlightID(string fid);
+    Flight* generateFlightByFlightID(const string& fid);
 
     ///---------- PARSING TO FILE ----------
 
 
     ///---------- UTILITY ----------
-    SingleParse identifyID(string& id);
+    SingleParse identifyID(const string& id);
+    Jobs parseJobFromString(const string& jobStr);
+    Classes parseStringToClass(const string& cls);
+    map<Jobs, int> parseCrewNeededForPlane(int modelID);
 };
 #endif //AP1_FROM_FILE_H

@@ -12,14 +12,12 @@
  * @param cid const string& -- a customer ID.
  * @param fullName string -- a string representing the MyCustomer's name.
  * @param priority int -- the priority of this MyCustomer in line.
- * @param reservations list<Reservation *> -- a list of reservations.
  */
-MyCustomer::MyCustomer(const string & cid, string & fullName,
-                       int priority, list<Reservation *> & reservations) {
+MyCustomer::MyCustomer(const string & cid, string & fullName, int priority) {
     this->descriptor = Descriptor(cid);
     this->fullName = fullName;
     this->priority = priority;
-    this->reservationsList = reservations;
+    this->reservationsList = list<Reservation*>();
 }
 
 /**

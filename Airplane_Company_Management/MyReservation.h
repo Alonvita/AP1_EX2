@@ -34,7 +34,7 @@ public:
 private:
     Descriptor  descriptor;
     int         maxBaggage;
-    Classes     classes;
+    Classes     cls;
     Flight*     flight;
     Customer*   costumer;
 };

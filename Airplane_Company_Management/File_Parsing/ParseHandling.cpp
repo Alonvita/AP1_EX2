@@ -4,65 +4,73 @@
 
 #include "ParseHandling.h"
 #include "../MyReservation.h"
+#include "../MyCustomer.h"
+#include "../MyFlight.h"
+#include "../MyPlane.h"
 
 ///---------- FROM FILE PARSE HANDLING ----------
 /**
- * generate(Parse target, string searcherID).
+ * generate(Parse target, const string& searcherID).
  *
  * @param target Parse -- the parse of required item
- * @param searcherID string -- the id to search by
+ * @param searcherID const string& -- the id to search by
  * @return a template <class T>
  */
 template <class T>
-T ParseHandling::generateSingle(SingleParse target, string searcherID) {
+T ParseHandling::generateSingle(SingleParse target, const string& searcherID) {
+    T obj;
     SingleParse searcherType;
 
     // open the right file, based on what we want to search
     switch (target) {
         case FLIGHT:
-            return generateFlightByFlightID(searcherID);
-
+            obj = generateFlightByFlightID(searcherID);
+            break;
         case RESERVATION:
-            return getReservationFromFile(searcherID);
-
+            obj = getReservationFromFile(searcherID);
+            break;
         case CUSTOMER:
-            return getCustomerByCustomerID(searcherID);
-
+            obj =  getCustomerByCustomerID(searcherID);
+            break;
         case EMPLOYEE:
             // search for a single employee
+            // NOTE: employee is the only one that may return as null.
             return getEmployeeByEmployeeID(searcherID);
-
         case PLANE:
             // extract searcherType
             searcherType = identifyID(searcherID);
 
             // get plane by plane ID
             if(searcherType == PLANE) {
-                return getPlaneByPlaneID(searcherID);
+                obj = getPlaneByPlaneID(searcherID);
             }
 
             // get plane by flight ID
             if(searcherType == FLIGHT) {
-                return getPlaneByFlightID(searcherID);
+                obj =  getPlaneByFlightID(searcherID);
+            } else {
+                throw runtime_error("Unknown target - searcherID combination.");
             }
-
-            throw runtime_error("Unknown target - searcherID combination.");
-
+            break;
         default:
             throw runtime_error("Unknown target type.");
     }
+
+    if(obj == nullptr)
+        throw runtime_error("There is no object that holds this ID.");
+
 }
 
 /**
- * generateMultiple(SingleParse target, string searcherID).
+ * generateMultiple(SingleParse target, const string& searcherID).
  *
  * @param target MultipleParse -- an enum representing the type of item to look for.
- * @param searcherID string -- id to search by.
+ * @param searcherID const string& -- id to search by.
  *
  * @return a vector of all occurences in the file
  */
 template <class T>
-vector<T> ParseHandling::generateMultiple(MultipleParse target, string searcherID) {
+vector<T> ParseHandling::generateMultiple(MultipleParse target, const string& searcherID) {
     SingleParse searcherType;
 
     switch (target) {
@@ -84,19 +92,19 @@ vector<T> ParseHandling::generateMultiple(MultipleParse target, string searcherI
 
 ///---------- GENERATE SINGLES FUNCTIONS ----------
 /**
- * getReservationFromFile(string rid).
+ * getReservationFromFile(const string& rid).
  *
- * @param rid string -- reservation ID.
+ * @param rid const string& -- reservation ID.
  * @return a new Reservation(...) object generated from file for this ID.
  */
-Reservation* ParseHandling::getReservationFromFile(string rid) {
+Reservation* ParseHandling::getReservationFromFile(const string& rid) {
     // Local Variables
     Line line;
     ofstream file;
     vector<string> vec;
 
     // open file
-    file.open(RESERVATION_STR_IDENTIFIER);
+    file.open(RESERVATIONS_FP);
 
     // read lines
     line.read_lines(cin, vec);
@@ -112,20 +120,33 @@ Reservation* ParseHandling::getReservationFromFile(string rid) {
 
         // if the ID of the reservation is equal to this reservation
         if(strcmp(splitLine.at(0).c_str(), rid.c_str()) == 0) {
+            // get relevant Customer and Flight, parse Class and convert maxBaggage to int.
+            MyCustomer* customer = ((MyCustomer*)getCustomerByCustomerID(splitLine.at(1)));
+            MyFlight* flight = ((MyFlight*)getPlaneByFlightID(splitLine.at(2)));
+            Classes cls = parseStringToClass(splitLine.at(3));
+            int maxBaggage = stoi(splitLine.at(4));
+
+
             // create a new reservation and return
-            // TODO: return new MyReservation();
+            return new MyReservation(rid, customer, flight, cls, maxBaggage);
         }
     }
 }
 
-Customer ParseHandling::getCustomerByCustomerID(string cid) {
+/**
+ * getCustomerByCustomerID(const string& cid).
+ *
+ * @param cid const string& -- a reference to a customer ID.
+ * @return a Customer ptr.
+ */
+Customer* ParseHandling::getCustomerByCustomerID(const string& cid) {
     // Local Variables
     Line line;
     ofstream file;
     vector<string> vec;
 
     // open file
-    file.open(CUSTOMER_STR_IDENTIFIER);
+    file.open(CUSTOMER_FP);
 
     // read lines
     line.read_lines(cin, vec);
@@ -139,20 +160,157 @@ Customer ParseHandling::getCustomerByCustomerID(string cid) {
         vector<string> splitLine(istream_iterator<string>{iss},
                                  istream_iterator<string>());
 
+        // create a new Customer
+        auto customer = new MyCustomer(cid, splitLine.at(1), stoi(splitLine.at(2)));
 
+        // add all reservations found associated with this customer
+        for(Reservation* r : this->generateReservationsByCustomerID(cid)) {
+            customer->addReservation(r);
+        }
     }
+}
+
+/**
+ * getPlaneByFlightID(const string &fid).
+ *
+ * @param fid const string& -- a reference to a constant string flight ID
+ * @return a a Plane ptr that is associated with this flight.
+ */
+Plane* ParseHandling::getPlaneByFlightID(const string &fid) {
+    // Local Variables
+    Line line;
+    ofstream file;
+    vector<string> vec;
+    string pid;
+
+    // open file
+    file.open(FLIGHTS_FP);
+
+    // read lines
+    line.read_lines(cin, vec);
+
+    // for each line
+    for(string l : vec) {
+        // get istringstream of the line
+        istringstream iss(l);
+
+        // turn it into a vector separated by words
+        vector<string> splitLine(istream_iterator<string>{iss},
+                                 istream_iterator<string>());
+
+        // if fid == this flights's id...
+        if(strcmp(splitLine.at(0).c_str(), fid.c_str()) == 0) {
+            // take the plane ID
+            pid = splitLine.at(1);
+            break; // found -> break
+        }
+    }
+
+    // no such flight was found -> return nullptr
+    if(pid.empty())
+        return nullptr;
+
+    // otherwise, get get the plane with it's ID
+    return getPlaneByPlaneID(pid);
+}
+
+/**
+ * getPlaneByPlaneID(const string &pid).
+ *
+ * @param pid const sting& -- const reference to a plane ID
+ * @return a new instance of the relevant plane parsed from the file, or nullptr if doesn't exist
+ */
+Plane* ParseHandling::getPlaneByPlaneID(const string &pid) {
+    // Local Variables
+    Line line;
+    ofstream planesFile;
+    vector<string> vec;
+
+    // open planesFile
+    planesFile.open(PLANES_FP);
+
+    // read lines
+    line.read_lines(cin, vec);
+
+    // for each line
+    for(string l : vec) {
+        // get istringstream of the line
+        istringstream iss(l);
+
+        // turn it into a vector separated by words
+        vector<string> splitLine(istream_iterator<string>{iss},
+                                 istream_iterator<string>());
+
+        // if ID was found
+        if(strcmp(pid.c_str(), splitLine.at(0).c_str()) == 0) {
+            int modelNumber = stoi(splitLine.at(1));
+            // parse the crew needed for this model
+            map<Jobs, int> crewNeeded = parseCrewNeededForPlane(modelNumber);
+            int maxFirst = stoi(splitLine.at(2)); // get max first size
+            int maxEconomy = stoi(splitLine.at(3)); // get max economy size
+
+            return new MyPlane(pid, modelNumber, crewNeeded, maxEconomy, maxFirst);
+        }
+    }
+
+    // no ID matching the required ID was found -> return nullptr.
+    return nullptr;
+}
+
+/**
+ * getEmployeeByEmployeeID(const string &eid).
+ *
+ * @param eid const string& -- a reference to an employee ID.
+ * @return an Employee ptr or nullptr if none exists.
+ */
+Employee* ParseHandling::getEmployeeByEmployeeID(const string &eid) {
+    // Local Variables
+    Line line;
+    ofstream planesFile;
+    vector<string> vec;
+
+    // open planesFile
+    planesFile.open(EMPLOYEE_FP);
+
+    // read lines
+    line.read_lines(cin, vec);
+
+    // for each line
+    for(string l : vec) {
+        // get istringstream of the line
+        istringstream iss(l);
+
+        // turn it into a vector separated by words
+        vector<string> splitLine(istream_iterator<string>{iss},
+                                 istream_iterator<string>());
+
+        // if employee found
+        if(strcmp(splitLine.at(0).c_str(), eid.c_str()) == 0) {
+            // Gather relevant information
+            Jobs jobTitle = this->parseJobFromString(splitLine.at(1)); // Parse Job
+            int seniority = stoi(splitLine.at(2)); // Seniority
+            int bYear = stoi(splitLine.at(3)); // Birth Year
+            Employee* employer = getEmployeeByEmployeeID(splitLine.at(4)); // Look for Employer
+
+            // return a new instance of the relevant employee
+            return new MyEmployee(eid, jobTitle, employer, seniority, bYear);
+        }
+    }
+
+    // none was found - return null ptr
+    return nullptr;
 }
 
 ///---------- GENERATE MULTIPLE FUNCTIONS ----------
 
 ///---------- UTILITY ----------
 /**
- * identifyID(string id).
+ * identifyID(const string& id).
  *
- * @param id string -- a string representing an ID
+ * @param id const string& -- a string representing an ID
  * @return the type of ID, determined by the 3 first digits of it.
  */
-SingleParse ParseHandling::identifyID(string& id) {
+SingleParse ParseHandling::identifyID(const string& id) {
     // identifier <- 3 letters from position 0
     string identifier = id.substr(0, 3);
 
@@ -177,4 +335,40 @@ SingleParse ParseHandling::identifyID(string& id) {
     }
 
     throw runtime_error("Unknown ID.");
+}
+
+/**
+ * parseStringToClass(const string& &cls).
+ *
+ * @param cls const string& -- a string representing a class
+ * @return the relevant Classes (enum) type.
+ */
+Classes ParseHandling::parseStringToClass(const string& cls) {
+    if(strcmp(cls.c_str(), "FIRST_CLASS") == 0)
+        return FIRST_CLASS;
+    if(strcmp(cls.c_str(), "SECOND_CLASS") == 0)
+        return SECOND_CLASS;
+
+    throw runtime_error("Error parsing class from file");
+}
+
+/**
+ * parseJobFromString(const string& jobStr).
+ *
+ * @param jobStr cosnt string& -- a constant string.
+ * @return the relevant Job from Jobs (enum)
+ */
+Jobs ParseHandling::parseJobFromString(const string& jobStr) {
+    // Jobs: MANAGER, NAVIGATOR, FLY_ATTENDANT, PILOT, OTHER
+    if(strcmp(jobStr.c_str(), "MANAGER") == 0)
+        return MANAGER;
+    if(strcmp(jobStr.c_str(), "PILOT") == 0)
+        return PILOT;
+    if(strcmp(jobStr.c_str(), "FLY_ATTENDANT") == 0)
+        return FLY_ATTENDANT;
+    if(strcmp(jobStr.c_str(), "NAVIGATOR") == 0)
+        return NAVIGATOR;
+
+    // otherwise - return other
+    return OTHER;
 }

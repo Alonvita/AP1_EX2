@@ -245,6 +245,20 @@ Reservation* MyImplementation::addResevation(string customerId, string flightId,
     if(f == nullptr)
         throw runtime_error("Flight doesn't exist.");
 
+    // check if first class is full
+    if(cls == FIRST_CLASS) {
+        if (((MyFlight *) f)->isFirstClassFullyBooked())
+            throw runtime_error("Flight's First Class is fully booked.");
+    }
+
+    // check if second class is full
+    if(cls == SECOND_CLASS) {
+        if (((MyFlight *) f)->isEconomyClassFullyBooked())
+            throw runtime_error("Flight's Economy Class is fully booked.");
+    }
+
+    //TODO: need to check the max_baggage issue...
+
     // create a new reservation
     Reservation* newReservation = new MyReservation(this->factory,
                                                     customer,

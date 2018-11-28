@@ -19,7 +19,7 @@ MyReservation::MyReservation(const string& rid, Customer* customer, Flight* flig
     this->descriptor = Descriptor(rid);
     this->costumer = customer;
     this->flight = flight;
-    this->classes = cls;
+    this->cls = cls;
     this->maxBaggage = maxBaggage;
 }
 
@@ -42,7 +42,7 @@ MyReservation::MyReservation(DescriptorsFactory* factoryPtr, Customer* costumer,
     // Initialize the rest of the fields
     this->costumer = costumer;
     this->flight = flight;
-    this->classes = cls;
+    this->cls = cls;
     this->maxBaggage = maxBaggage;
 }
 
@@ -70,7 +70,7 @@ string MyReservation::getID() { return this->descriptor.getID(); }
  *
  * @return the classes for this MyReservation
  */
-Classes MyReservation::getClass() { return this->classes; }
+Classes MyReservation::getClass() { return this->cls; }
 
 /**
  * getCustomer().

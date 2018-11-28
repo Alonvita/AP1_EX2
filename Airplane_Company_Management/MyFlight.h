@@ -25,25 +25,29 @@ public:
     void initializeID(DescriptorsFactory* factoryPtr);
 
     /// ---------- GETTERS & SETTERS ----------
+    //TODO: check if relevant -> bool addBagage(int weight);
+    bool isFirstClassFullyBooked();
+    bool isEconomyClassFullyBooked();
     void addReservation(Reservation*);
 
     string              getID() override;
-    int                 getModelNumber() override;
-    list<Reservation*>  getReservations() override;
-    list<Employee*>     getAssignedCrew() override;
     Date                getDate() override;
     string              getSource() override;
+    int                 getModelNumber() override;
     string              getDestination() override;
+    list<Reservation*>  getReservations() override;
+    list<Employee*>     getAssignedCrew() override;
 
 private:
+    Plane*              plane;
+    string              source;
+    list<Employee*>     employees;
+    Date                flightDate;
     Descriptor          descriptor;
     int                 modelNumber;
-    Date                flightDate;
-    string              source;
     string              destination;
-    Plane*              plane;
-    list<Employee*>     employees;
     list<Reservation*>  reservations;
+    int                 currentBaggageWeight = 0;
 };
 
 #endif //AP1_FLIGHT_H

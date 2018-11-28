@@ -8,7 +8,7 @@
 using namespace std;
 
 
-enum Jobs {MANAGER, NAVIGATOR, FLY_ATTENDANT, PILOT, OTHER};
+enum Jobs { MANAGER, NAVIGATOR, FLY_ATTENDANT, PILOT, OTHER };
 enum Classes {FIRST_CLASS, SECOND_CLASS};
 
 

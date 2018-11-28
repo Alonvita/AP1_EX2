@@ -113,12 +113,56 @@ void MyFlight::initializeID(DescriptorsFactory* factoryPtr) {
 /// ---------- GETTERS & SETTERS ----------
 
 /**
+ * isFirstClassFullyBooked().
+ *
+ * @return true if the flight's first class is fully booked, or false otherwise
+ */
+bool MyFlight::isFirstClassFullyBooked() {
+    int countF = 0;
+
+    for(Reservation* r : this->reservations) {
+        if(r->getClass() == FIRST_CLASS)
+            ++countF;
+    }
+
+    return (countF == this->plane->getMaxFirstClass());
+}
+
+/**
+ * isEconomyClassFullyBooked().
+ *
+ * @return true if the flight's economy class is fully booked, or false otherwise
+ */
+bool MyFlight::isEconomyClassFullyBooked() {
+    int countE = 0;
+
+    for(Reservation* r : this->reservations) {
+        if(r->getClass() == SECOND_CLASS)
+            ++countE;
+    }
+
+    return (countE == this->plane->getMaxFirstClass());
+}
+
+//TODO: delete if max_baggage doesn't have to be checked for a flight...
+//**
+// * addBagage(int weight).
+// *
+// * @param weight int -- the bagage's weight
+// * @return true if the new max baggage doesn't exceed the max baggage available for this flight.
+// */
+//bool MyFlight::addBagage(int weight) {
+//    return (weight + currentBaggageWeight )
+//}
+
+/**
  * addReservation(Reservation*).
  *
  * @param reservation Reservation* -- a reservation ptr.
  */
 void MyFlight::addReservation(Reservation* reservation) {
     this->reservations.push_back(reservation);
+    this->currentBaggageWeight += reservation->getMaxBaggage();
 }
 
 /**
