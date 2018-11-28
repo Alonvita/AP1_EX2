@@ -72,8 +72,11 @@ Employee* MyImplementation::getEmployee(string id) {
     for(pair<Jobs, map<string,Employee*>> p : this->employeesMap) {
 
         // check if there's an employee with this ID in the maps
-        auto it = p.second.find(id);
-        if(it != p.second.end()) {
+        map<string,Employee*> empsMap = p.second;
+
+        auto it = empsMap.find(id);
+
+        if(it != empsMap.end()) {
             return it->second;
         }
     }
@@ -136,21 +139,27 @@ Employee* MyImplementation::addEmployee(int seniority, int birth_year, string em
     Employee* newEmployee = new MyEmployee(desc, title, employer,seniority, birth_year);
 
     // make a pair
-    pair<string, Employee*> p = make_pair(newEmployee->getID(), newEmployee);
+    string empID = newEmployee->getID();
+    pair<string, Employee*> p = make_pair(empID, newEmployee);
 
     Jobs jobTitle = newEmployee->getTitle(); // local variable for the job title
 
     // check if map already contains a key of the same Job title
     auto it = this->employeesMap.find(jobTitle);
     if(it != this->employeesMap.end()) {
-        // if so, add a pair of <string, Employee*> to the map
-        map<string, Employee*> p = this->employeesMap.at(jobTitle);
-        p.insert(make_pair(newEmployee->getID(), newEmployee));
+        // get the map
+        map<string, Employee*> p1 = it->second;
+
+        string tempID = newEmployee->getID();
+        (it->second).insert(make_pair(tempID, newEmployee));
+
+        return newEmployee;
     }
 
     // otherwise, create a new temp map
     map<string, Employee*> newMap;
-    newMap.insert(make_pair(newEmployee->getID(), newEmployee)); // add ID->Employee
+    string tempID = newEmployee->getID();
+    newMap.insert(make_pair(tempID, newEmployee)); // add ID->Employee
 
     // create new entry for Job->newMp
     this->employeesMap.insert(make_pair(jobTitle, newMap));

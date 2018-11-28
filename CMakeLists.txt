@@ -33,6 +33,8 @@ set(AIRPLANE_MANAGEMENT
         Airplane_Company_Management/Descriptors/Descriptor.cpp Airplane_Company_Management/Descriptors/Descriptor.h
 
         # ---- UTILITY ----
+        # MapSorting
+        Airplane_Company_Management/Utility/MapSorting.h
         # StringsUtility
         Airplane_Company_Management/Utility/StringsUtility.cpp
         # OperatorsHandling
