@@ -13,8 +13,8 @@
  *
  * @return a value of class type V or nullptr if doesn't exist.
  */
-template <class K, class V>
-V ObjectsMap<K, V>::getItem(K key) {
+template <class K, class V, class J>
+V ObjectsMap<K, V, J>::getItem(K key) {
     return this->objects.at(key);
 }
 
@@ -27,9 +27,9 @@ V ObjectsMap<K, V>::getItem(K key) {
  *
  * @return true if the map contains a value to key K.
  */
-template <class K, class V>
-bool ObjectsMap<K, V>::contains(K key) {
-    return (this->objects.at(key) != nullptr);
+template <class K, class V, class J>
+bool ObjectsMap<K, V, J>::contains(K key) {
+    return (this->objects.find(key) != this->objects.end());
 }
 
 /**
@@ -47,14 +47,31 @@ bool ObjectsMap<K, V>::contains(K key) {
  *              size (after insertion) == size (b4 insertion) + 1
  *
  */
-template <class K, class V>
-bool ObjectsMap<K, V>::addItem(K key, V value) {
+template <class K, class V, class J>
+bool ObjectsMap<K, V, J>::addItem(K key, V value) {
     // take the current size
     unsigned long size = this->objects.size();
 
     this->objects.insert(pair<K, V>(key, value));
 
     // if an item was added, the size would grow by 1.
+    return (this->objects.size() == size + 1);
+}
+
+/**
+ * addItem(pair<K, V> p).
+ *
+ * @return true if the pair was added successfully, or false otherwise.
+ *          implementation is done by checking the container size
+ */
+template <class K, class V, class J>
+bool ObjectsMap<K, V>::addItem(pair<K, V> p) {
+   unsigned long size = this->objects.size();
+
+    V& v = this->objects.find(p.first);
+    // check if v is a map
+    if()
+
     return (this->objects.size() == size + 1);
 }
 
@@ -80,4 +97,9 @@ typename multimap<K, V>::iterator ObjectsMap<K, V>::begin() {
 template <class K, class V>
 typename multimap<K, V>::iterator ObjectsMap<K, V>::end() {
     return this->objects.end();
+}
+
+template <class K, class V>
+typename multimap<K,V>::iterator ObjectsMap<K, V>::find(K key) {
+    return this->objects.find(key);
 }

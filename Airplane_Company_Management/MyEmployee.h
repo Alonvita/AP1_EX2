@@ -19,6 +19,8 @@ public:
     void initializeID(DescriptorsFactory*);
 
     /// ---------- GETTERS & SETTERS ----------
+    bool        hasCrew();
+    void        crewFound();
     string      getID() override;
     int         getSeniority() override;
     int         getBirthYear() override;
@@ -27,6 +29,7 @@ public:
 
 private:
     /// ---------- PRIVATE MEMBERS ----------
+    bool        hasACrew;
     Jobs        jobs;
     Employee*   employer;
     int         seniority;

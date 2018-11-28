@@ -25,12 +25,12 @@ class MyImplementation : public Ex2 {
 private:
     map<int, int> availablePlanesCounter;
 
-    DescriptorsFactory*                             factory;
-    ObjectsMap<string, Plane*>                      planesMap;
-    ObjectsMap<string, Flight*>                     flightsMap;
-    ObjectsMap<string, Customer*>                   customersMap;
-    ObjectsMap<Jobs, multimap<string, Employee*>>   employeesMap;
-    ObjectsMap<string, Reservation*>                reservationsMap;
+    DescriptorsFactory*               factory;
+    map<string, Plane*>               planesMap;
+    map<string, Flight*>              flightsMap;
+    map<string, Customer*>            customersMap;
+    map<Jobs, map<string, Employee*>> employeesMap;
+    map<string, Reservation*>         reservationsMap;
 
 
 public:

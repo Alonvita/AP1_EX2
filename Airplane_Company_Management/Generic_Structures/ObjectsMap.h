@@ -11,10 +11,10 @@
 
 using namespace std;
 
-template <class K, class V>
+template <class K, class V, class J>
 class ObjectsMap {
 private:
-//    ParseHandling<V> fp;
+// ParseHandling<V> fp;
     multimap<K, V> objects;
 public:
     /// ---------- CONSTRUCTORS - DESTRUCTORS ---------
@@ -22,13 +22,14 @@ public:
     ~ObjectsMap() = default;
 
     /// ---------- GETTERS & SETTERS ---------
-    bool    contains    (K);
     V       getItem     (K);
     bool    addItem     (K, V);
+    bool    addItem     (pair<K,pair<V, J>>);
 
     /// ---------- ITERATIONS ---------
-    typename multimap<K, V>::iterator end();
-    typename multimap<K, V>::iterator begin();
+    typename multimap<K, V, J>::iterator end();
+    typename multimap<K, V, J>::iterator find(K);
+    typename multimap<K, V, J>::iterator begin();
 
 };
 
@@ -37,5 +38,6 @@ template class ObjectsMap<string, Flight*>;
 template class ObjectsMap<string, Employee*>;
 template class ObjectsMap<string, Customer*>;
 template class ObjectsMap<string, Reservation*>;
+template class ObjectsMap<Jobs, map<string, Employee*>>;
 
 #endif //AP1_OBJECTSLIST_H

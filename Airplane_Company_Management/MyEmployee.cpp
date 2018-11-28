@@ -22,6 +22,7 @@ MyEmployee::MyEmployee(DescriptorsFactory * factoryPtr, Jobs job,
     this->initializeID(factoryPtr);
 
     // Initialize the rest of the fields
+    this->hasACrew = false; // doesn't have a crew
     this->jobs = job;
     this->employer = employer;
     this->birthYear = birthYear;
@@ -67,6 +68,20 @@ int MyEmployee::getBirthYear() {
 Employee* MyEmployee::getEmployer() {
     return this->employer;
 }
+
+/**
+ * hasCrew().
+ *
+ * @return true if this employee has a crew, or false otherwise.
+ */
+bool MyEmployee::hasCrew() {
+    return this->hasACrew;
+}
+
+/**
+ * crewFound().
+ */
+void MyEmployee::crewFound() { this->hasACrew = true; }
 
 /**
  * MyEmployee::getID().

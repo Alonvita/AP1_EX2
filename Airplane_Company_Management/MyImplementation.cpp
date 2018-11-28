@@ -21,7 +21,7 @@ MyImplementation::MyImplementation() {
  * @return a pointer to the flight associated with this ID, or nullptr;
  */
 Flight* MyImplementation::getFlight(string id) {
-    return (this->flightsMap.getItem(id));
+    return (this->flightsMap.at(id));
     // TODO: need to check the files too
 }
 
@@ -32,7 +32,7 @@ Flight* MyImplementation::getFlight(string id) {
  * @return a pointer to the customer associated with this ID, or nullptr;
  */
 Customer* MyImplementation::getCustomer(string id) {
-    return (this->customersMap.getItem(id));
+    return (this->customersMap.at(id));
     // TODO: need to check the files too
 }
 
@@ -44,7 +44,7 @@ Customer* MyImplementation::getCustomer(string id) {
  */
 Plane* MyImplementation::getPlane(string id) {
     // find a plane
-    MyPlane* plane = (MyPlane*) this->planesMap.getItem(id);
+    MyPlane* plane = (MyPlane*) this->planesMap.at(id);
 
     // TODO: need to check the files too
     return plane;
@@ -57,7 +57,17 @@ Plane* MyImplementation::getPlane(string id) {
  * @return a pointer to the employee associated with this ID, or nullptr;
  */
 Employee* MyImplementation::getEmployee(string id) {
-    return this->employeesMap.getItem(id);
+    // iterate over the items in the employeesMap per Job
+    for(pair<Jobs, map<string,Employee*>> p : this->employeesMap) {
+
+        // check if there's an employee with this ID in the maps
+        if(p.second.find(id) != p.second.end()) {
+            return p.second.at(id);
+        }
+    }
+
+    // employee was not found - return nullptr.
+    return nullptr;
 
     // TODO: need to check the files too
 }
@@ -69,7 +79,7 @@ Employee* MyImplementation::getEmployee(string id) {
  * @return a pointer to the reservation associated with this ID, or nullptr;
  */
 Reservation* MyImplementation::getReservation(string id) {
-    return (this->reservationsMap.getItem(id));
+    return (this->reservationsMap.at(id));
 
     // TODO: need to check the files too
 }
@@ -89,7 +99,7 @@ Customer* MyImplementation::addCustomer(string full_name, int priority) {
     // create a new object
     Customer* newCustomer = new MyCustomer(this->factory, full_name, priority, reservations);
 
-    this->customersMap.addItem(newCustomer->getID(), newCustomer);
+    this->customersMap.insert(make_pair(newCustomer->getID(), newCustomer));
 }
 
 /**
@@ -112,15 +122,23 @@ Employee* MyImplementation::addEmployee(int seniority, int birth_year, string em
     // make a pair
     pair<string, Employee*> p = make_pair(newEmployee->getID(), newEmployee);
 
-    // check if Job description already exists
+    Jobs jobTitle = newEmployee->getTitle(); // local variable for the job title
 
-    // TODO: check if the map inside the map is actually a good idea -
-    // TODO: the insertion made here is wrong because it doesn't check if the Job title already exists
-    // TODO: in the map
-    map<string, Employee*> tempMap;
-    tempMap.insert(p);
+    // check if map already contains a key of the same Job title
+    auto it = this->employeesMap.find(jobTitle);
+    if(it != this->employeesMap.end()) {
+        // if so, add a pair of <string, Employee*> to the map
+        map<string, Employee*> p = this->employeesMap.at(jobTitle);
+        p.insert(make_pair(newEmployee->getID(), newEmployee));
+    }
 
-    this->employeesMap.addItem(newEmployee->getTitle(), tempMap);
+    // otherwise, create a new temp map
+    map<string, Employee*> newMap;
+    newMap.insert(make_pair(newEmployee->getID(), newEmployee)); // add ID->Employee
+
+    // create new entry for Job->newMp
+    this->employeesMap.insert(make_pair(jobTitle, newMap));
+
 }
 
 /**
@@ -155,7 +173,7 @@ Flight* MyImplementation::addFlight(int model_number, Date date, string source, 
                          source, destination, plane);
 
     // Add the new object to the flights list
-    this->flightsMap.addItem(newFlight->getID(), newFlight);
+    this->flightsMap.insert(make_pair(newFlight->getID(), newFlight));
 }
 
 /**
@@ -190,7 +208,7 @@ Plane* MyImplementation::addPlane(int model_number, map<Jobs, int> crew_needed, 
     this->availablePlanesCounter.insert(pair<int, int>(model_number, 1));
 
     // add the new object to the planes list
-    this->planesMap.addItem(newPlane->getID(), newPlane);
+    this->planesMap.insert(make_pair(newPlane->getID(), newPlane));
 }
 
 /**
@@ -284,8 +302,9 @@ vector<T> MyImplementation::findCrewForPlane(vector<Jobs> jobs) {
     // push default as crew not found
     crew.push_back(false);
 
-    for(Jobs j : jobs) {
-        Employee* employee =
+    // look for available crew members
+    for() {
+
     }
 }
 
