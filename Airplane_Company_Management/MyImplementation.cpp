@@ -245,7 +245,7 @@ Reservation* MyImplementation::addResevation(string customerId, string flightId,
     // update Customer with the new reservation
     ((MyCustomer*) customer)->addReservation(newReservation);
 
-    this->reservationsMap.addItem(newReservation->getID(), newReservation);
+    this->reservationsMap.insert(make_pair(newReservation->getID(), newReservation));
 }
 
 /// ---------- UTILITY FUNCTIONS ----------
@@ -302,8 +302,9 @@ vector<T> MyImplementation::findCrewForFlight(vector<Jobs> crewNeeded, Date date
 
     // for every job needs to be found
     for(Jobs j : crewNeeded) {
+        // check if an employee for this job even exists
         if(this->employeesMap.find(j) == this->employeesMap.end()) {
-            // job not found - set false and return
+            // employee for job doesn't exist yet - set false and return
             crew.insert(0, false);
             return crew;
         }
@@ -311,16 +312,75 @@ vector<T> MyImplementation::findCrewForFlight(vector<Jobs> crewNeeded, Date date
         // take the map for the job from the employeesMap
         map<string, Employee*> employeesPerJob = this->employeesMap.at(j);
 
-        for(pair<string, Employee*> employee : employeesPerJob) {
-
-
-            // otherwise, add it and update crewFound
-
+        // for each pair in the map
+        for(pair<string, Employee*> pair : employeesPerJob) {
+            // if the employee is available on the date, add it to the vector
+            if(isEmployeeAvailableOn(pair.first, date)) {
+                crew.push_back(pair.second);
+                break; // position filled - look for next job needed
+            }
         }
     }
 
     // number of crew members found is equal to the crewNeeded required -> set to true
-    crew.insert(0, crew.size() = crewNeeded.size() + 1 ? true : false);
+    crew.insert(0, crew.size() == crewNeeded.size());
+
+    return crew;
+}
+
+/**
+ * isEmployeeAvailableOn(Date date).
+ *
+ * @param date Date.
+ * @return
+ */
+bool MyImplementation::isEmployeeAvailableOn(string& eid, Date date) {
+    // get the flights that this employee is assigned ti
+    vector<Flight*> flightsForEmployee = getFlightsForEmployee(eid);
+
+    // no flights were found - that means that the employee must be available
+    if(flightsForEmployee.empty()) {
+        return true;
+    }
+
+    // flights were found -> for each flight found...
+    for(Flight* f : flightsForEmployee) {
+        // if the given date is equal to the flight date
+        if((f->getDate() == date))
+          return false; // return false -> employee is busy on the given date
+    }
+
+    // date was not found on the flights for this employee -> available on the given date
+    return true;
+}
+
+/**
+ * getFlightsForEmployee(string eid).
+ *
+ * @param eid string -- an employee id
+ * @return a vector with all the flights associated to this employee.
+ */
+vector<Flight*> MyImplementation::getFlightsForEmployee(string& eid) {
+    // Local Variables
+    vector<Flight*> flightsAssociatedToEmployee;
+
+    // foe every flight in the system
+    for(pair<string, Flight*> flights : this->flightsMap) {
+        // for every employee in the crew, check if he is assigned to this flight
+        for(Employee* employee : flights.second->getAssignedCrew()) {
+            // if one of the employees is this employee
+            if(strcmp(employee->getID().c_str(), eid.c_str()) == 0) {
+                // add it to the flight
+                flightsAssociatedToEmployee.push_back(flights.second);
+                break;
+            }
+        }
+    }
+
+    // TODO: need to check from file as well!
+
+    // return the flights associated with the employee
+    return flightsAssociatedToEmployee;
 }
 
 /// ---------- EXIT ----------
