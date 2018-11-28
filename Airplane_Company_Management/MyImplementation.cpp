@@ -204,7 +204,7 @@ Flight* MyImplementation::addFlight(int model_number, Date date, string source, 
     Flight* newFlight = new MyFlight(desc, model_number, reservations, employees, date, source, destination, plane);
 
     // reduce available planes counter before creating new flight
-    this->availablePlanesCounter.at(plane->getModelNumber())--;
+    this->availablePlanesTable.at(plane->getModelNumber()).first--;
 
     // Add the new object to the flights list
     this->flightsMap.insert(make_pair(newFlight->getID(), newFlight));
@@ -228,14 +228,13 @@ Plane* MyImplementation::addPlane(int model_number, map<Jobs, int> crew_needed, 
     int max_economy = max_passangers.at(SECOND_CLASS);
 
     // search if the plane model is already in the system
-    for(pair<int, int> p : this->availablePlanesCounter) {
-        if(p.first == model_number) {
-            // if so - increase the counter
-            this->availablePlanesCounter.at(model_number)++;
-        }
-    }
+    auto it = availablePlanesTable.find(model_number);
+    if(it != availablePlanesTable.end()) {
+        // increate the counter for the plane
+        it->second.first++;
 
-    // otherwise, create a new Plane* and a new map entry
+        return it->second.second;
+    }
 
     // create a new instance of the object
     Descriptor desc = this->factory->givePlaneDescriptor();
@@ -243,7 +242,7 @@ Plane* MyImplementation::addPlane(int model_number, map<Jobs, int> crew_needed, 
     Plane* newPlane = new MyPlane(desc, model_number, crew_needed, max_economy, max_first);
 
     // map entry for counter + 1
-    this->availablePlanesCounter.insert(pair<int, int>(model_number, 1));
+    this->availablePlanesTable.insert(make_pair(model_number, make_pair(1, newPlane)));
 
     // add the new object to the planes list
     this->planesMap.insert(make_pair(newPlane->getID(), newPlane));
@@ -314,7 +313,7 @@ Plane* MyImplementation::findAvailablePlaneInSystem(int model_number, Date date)
     bool booked = false;
 
     // look if there's an available plane for this model number
-    if(this->availablePlanesCounter.find(model_number) == this->availablePlanesCounter.end())
+    if(this->availablePlanesTable.find(model_number) == this->availablePlanesTable.end())
         return nullptr;
 
     // iterate over the map

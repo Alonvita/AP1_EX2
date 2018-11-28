@@ -97,4 +97,22 @@ int main() {
 
     myImplementation->addEmployee(seniority, bYear, employerID, job);
     // ---- EMPLOYEE 4 ----
+
+    // ---- TEST DATES ----
+    Date d = Date("10-10-1993");
+    Date d1 = Date("10-10-1993");
+    Date d2 = Date("10-10-1991");
+    Date d3 = Date("10-11-1993");
+
+    if(d == d1) cout << "DATE TEST 1 PASSED" << endl;
+
+    if(d > d2) cout << "DATE TEST 2 PASSED" << endl;
+
+    // ---- END TEST DATES ----
+
+
+
+    cout << d.getDate();
+
+    myImplementation->addFlight(747, d, "israel", "metula");
 }

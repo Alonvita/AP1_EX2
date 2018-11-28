@@ -18,6 +18,7 @@ Date::Date(string date) {
 }
 
 /// ---------- OPERATORS OVERLOADING ----------
+
 /**
  * operator<(const MyDate &d) const.
  *

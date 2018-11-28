@@ -26,7 +26,7 @@
 class MyImplementation : public Ex2 {
 private:
     ParseHandling parseHandling;
-    map<int, int> availablePlanesCounter;
+    map<int, pair<int, Plane*>>     availablePlanesTable;
 
     DescriptorsFactory*               factory;
     map<string, Plane*>               planesMap;
