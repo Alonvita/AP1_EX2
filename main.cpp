@@ -28,6 +28,7 @@ int main() {
 
 
     Plane* p1 = myImplementation->addPlane(p1Model, p1crewNeeded, seats);
+    Plane* p2 = myImplementation->addPlane(p1Model, p1crewNeeded, seats);
 
     // ---- END PLANE 1 ----
 
@@ -99,14 +100,16 @@ int main() {
     // ---- EMPLOYEE 4 ----
 
     // ---- TEST DATES ----
-    Date d = Date("10-10-1993");
-    Date d1 = Date("10-10-1993");
-    Date d2 = Date("10-10-1991");
-    Date d3 = Date("10-11-1993");
+    Date d = Date("1993-10-10");
+    Date d1 = Date("1993-10-10");
+    Date d2 = Date("1991-10-10");
+    Date d3 = Date("1993-11-10");
+    Date d4 = Date("1993-10-11");
 
     if(d == d1) cout << "DATE TEST 1 PASSED" << endl;
-
     if(d > d2) cout << "DATE TEST 2 PASSED" << endl;
+    if(d < d3) cout << "DATE TEST 3 PASSED" << endl;
+    if(d < d4) cout << "DATE TEST 4 PASSED" << endl;
 
     // ---- END TEST DATES ----
 

@@ -22,14 +22,14 @@ OperatorsHandlerResult operatorsHandler(Date& lhs, Date& rhs) {
         return EQUALS;
 
     // Break d MyDate to separate strings
-    string otherYear    = otherDate.substr(0, 3);
-    string otherMonth   = otherDate.substr(5, 7);
-    string otherDay     = otherDate.substr(8, 9);
+    string otherYear    = otherDate.substr(0, 4);
+    string otherMonth   = otherDate.substr(5, 2);
+    string otherDay     = otherDate.substr(8, 2);
 
     // Break this MyDate to separate strings
-    string thisYear     = lhs.getDate().substr(0, 3);
-    string thisMonth    =  lhs.getDate().substr(5, 7);
-    string thisDay      =  lhs.getDate().substr(8, 9);
+    string thisYear     = lhs.getDate().substr(0, 4);
+    string thisMonth    =  lhs.getDate().substr(5, 2);
+    string thisDay      =  lhs.getDate().substr(8, 2);
 
     // Check year < other year
     if(stoi(thisYear) < stoi(otherYear))
