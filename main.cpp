@@ -132,8 +132,61 @@ int main() {
     // ---- END TEST DATES ----
 
     Flight* f1 = myImplementation->addFlight(747, d, "israel", "metula");
-
     cout << "DEBUG: Flight Added: " << f1->getID() << endl;
+
+    // ---- EMPLOYEE 5 ----
+    seniority = 50;
+    bYear = 1940;
+    job = NAVIGATOR;
+    employerID = "EID2";
+
+    Employee* emp5 = myImplementation->addEmployee(seniority, bYear, employerID, job);
+
+    cout << "DEBUG: Employee4 Added: " << emp5->getID() << endl;
+    // ---- EMPLOYEE 5 ----
+
+    // ---- EMPLOYEE 6 ----
+    seniority = 50;
+    bYear = 1940;
+    job = PILOT;
+    employerID = "EID2";
+
+    Employee* emp6 = myImplementation->addEmployee(seniority, bYear, employerID, job);
+
+    cout << "DEBUG: Employee4 Added: " << emp6->getID() << endl;
+    // ---- EMPLOYEE 6 ----
+
+    // ---- EMPLOYEE 7 ----
+    seniority = 50;
+    bYear = 1940;
+    job = PILOT;
+    employerID = "EID2";
+
+    Employee* emp7 = myImplementation->addEmployee(seniority, bYear, employerID, job);
+
+    cout << "DEBUG: Employee4 Added: " << emp7->getID() << endl;
+    // ---- EMPLOYEE 7 ----
+
+    // ---- EMPLOYEE 8 ----
+    seniority = 50;
+    bYear = 1940;
+    job = FLY_ATTENDANT;
+    employerID = "EID2";
+
+    Employee* emp8 = myImplementation->addEmployee(seniority, bYear, employerID, job);
+
+    cout << "DEBUG: Employee4 Added: " << emp8->getID() << endl;
+    // ---- EMPLOYEE 8 ----
+
+    // ---- EMPLOYEE 9 ----
+    seniority = 2;
+    bYear = 1990;
+    employerID = "EID0";
+    job = MANAGER;
+
+    Employee* emp9 = myImplementation->addEmployee(seniority, bYear, employerID, job);
+    cout << "DEBUG: Employee1 Added: " << emp9->getID() << endl;
+    // ---- EMPLOYEE 9 ----
 
     Flight* f2 = myImplementation->addFlight(747, d, "israel", "metula");
     cout << "DEBUG: Flight Added: " << f2->getID() << endl;

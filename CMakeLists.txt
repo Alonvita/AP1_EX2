@@ -12,7 +12,6 @@ set(AIRPLANE_MANAGEMENT
         Airplane_Company_Management/File_Parsing/ParseHandling.cpp Airplane_Company_Management/File_Parsing/ParseHandling.h
         # Interface
         Airplane_Company_Management/interface.h
-        # ID
         # Employee
         Airplane_Company_Management/MyEmployee.cpp Airplane_Company_Management/MyEmployee.h
         # Plane
