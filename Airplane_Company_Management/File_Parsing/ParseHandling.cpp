@@ -24,17 +24,13 @@ T ParseHandling::generateSingle(SingleParse target, const string& searcherID) {
     // open the right file, based on what we want to search
     switch (target) {
         case FLIGHT:
-            obj = getFlightByFlightID(searcherID);
-            break;
+            return getFlightByFlightID(searcherID);
         case RESERVATION:
-            obj = getReservationFromFile(searcherID);
-            break;
+            return getReservationFromFile(searcherID);
         case CUSTOMER:
-            obj =  getCustomerByCustomerID(searcherID);
-            break;
+            return getCustomerByCustomerID(searcherID);
         case EMPLOYEE:
             // search for a single employee
-            // NOTE: employee is the only one that may return as null.
             return getEmployeeByEmployeeID(searcherID);
         case PLANE:
             // extract searcherType
@@ -42,22 +38,18 @@ T ParseHandling::generateSingle(SingleParse target, const string& searcherID) {
 
             // get plane by plane ID
             if(searcherType == PLANE) {
-                obj = getPlaneByPlaneID(searcherID);
+                return getPlaneByPlaneID(searcherID);
             }
 
             // get plane by flight ID
             if(searcherType == FLIGHT) {
-                obj =  getPlaneByFlightID(searcherID);
+                return getPlaneByFlightID(searcherID);
             } else {
                 throw runtime_error("Unknown target - searcherID combination.");
             }
-            break;
         default:
             throw runtime_error("Unknown target type.");
     }
-
-    if(obj == nullptr)
-        throw runtime_error("There is no object that holds this ID.");
 
 }
 
