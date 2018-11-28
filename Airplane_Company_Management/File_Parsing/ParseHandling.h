@@ -5,6 +5,8 @@
 #ifndef AP1_FROM_FILE_H
 #define AP1_FROM_FILE_H
 
+#define SPACE " "
+
 #define MODELS_FP "../DatabaseFiles/models.txt"
 #define PLANES_FP "../DatabaseFiles/planes.txt"
 #define FLIGHTS_FP "../DatabaseFiles/flights.txt"
@@ -65,12 +67,19 @@ public:
     Flight* getFlightByFlightID(const string &fid);
 
     ///---------- PARSING TO FILE ----------
-
+    void parsePlanesToFile(map<string, Plane*> planesMap;);
+    void parseFlightsToFile(map<string, Flight*> flightsMap;);
+    void parseCustomersToFile(map<string, Customer*> customersMap);
+    void parseEmployeesToFile(map<Jobs, map<string, Employee*>> employeesMap;);
+    void parseReservationsToFile(map<string, Reservation*> reservationsMap;);
 
     ///---------- UTILITY ----------
-    SingleParse identifyID(const string&);
-    Jobs parseJobFromString(const string&);
-    Classes parseStringToClass(const string&);
-    map<Jobs, int> parseCrewNeededForPlane(int);
+    SingleParse     identifyID(const string&);
+    string          parseJobToString(Jobs);
+    string          parseClassToStr(Classes cls);
+    map<Jobs, int>  parseCrewNeededForPlane(int);
+    Jobs            parseJobFromString(const string&);
+    Classes         parseStringToClass(const string&);
+    void            writeStrToFile(const string &, const string &);
 };
 #endif //AP1_FROM_FILE_H

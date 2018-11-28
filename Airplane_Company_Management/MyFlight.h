@@ -23,6 +23,7 @@ public:
 
     /// ---------- GETTERS & SETTERS ----------
     //TODO: check if relevant -> bool addBagage(int weight);
+    Plane* getPlane();
     bool isFirstClassFullyBooked();
     bool isEconomyClassFullyBooked();
     void addReservation(Reservation*);

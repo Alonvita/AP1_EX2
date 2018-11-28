@@ -168,19 +168,19 @@ Flight* MyImplementation::addFlight(int model_number, Date date, string source, 
     if(employees.empty())
         throw runtime_error("Cannot find crew for this flight.");
     // --- GENERATE CREW ---
-
     // create a flight with an empty reservation list
     Descriptor desc = this->factory->giveFlightDescriptor();
 
     // --- GENERATE RESERVATIONS ---
     list<Reservation*> reservations = generateReservationsForFlight(desc.getID());
+    // --- GENERATE RESERVATIONS ---
+
+
     // add all reservations to the flight's reservations list
     Flight* newFlight = new MyFlight(desc, model_number, reservations, employees, date, source, destination, plane);
 
-    // --- GENERATE RESERVATIONS ---
-
-    // An available plane was found -> create the flight.
-
+    // reduce available planes counter before creating new flight
+    this->availablePlanesCounter.at(plane->getModelNumber())--;
 
     // Add the new object to the flights list
     this->flightsMap.insert(make_pair(newFlight->getID(), newFlight));

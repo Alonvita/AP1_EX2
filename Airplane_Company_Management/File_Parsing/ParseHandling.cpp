@@ -76,6 +76,9 @@ vector<T> ParseHandling::generateMultiple(MultipleParse target, const string& se
 
         case EMPLOYEES:
             return generateEmployeesByFlightID(searcherID);
+
+        case JOBS:
+            return parseJobFromString(searcherID);
     }
 }
 
@@ -145,8 +148,15 @@ Customer* ParseHandling::getCustomerByCustomerID(const string& cid) {
         // add all reservations found associated with this customer
         list<Reservation*> rList = this->generateReservationsByCustomerID(cid);
 
+        // get full name
+        stringstream fullName;
+        fullName << splitLine.at(1);
+        fullName << SPACE;
+        fullName << splitLine.at(2);
 
-        auto customer = new MyCustomer(desc, splitLine.at(1), stoi(splitLine.at(2)), rList);
+        string name = fullName.str();
+
+        auto customer = new MyCustomer(desc, name, stoi(splitLine.at(3)), rList);
     }
 }
 
@@ -390,6 +400,142 @@ list<Reservation*> ParseHandling::generateReservationsByFlightID(const string &f
     }
 }
 
+///---------- PARSE TO FILE ----------
+/**
+ * parseEmployeesToFile(map<Jobs, map<string, Employee *>> employeesMap).
+ *
+ * @param employeesMap map<Jobs, map<string, Employee *>> -- map of employees
+ */
+void ParseHandling::parseEmployeesToFile(map<Jobs, map<string, Employee *>> employeesMap) {
+    stringstream ss;
+
+    for(pair<Jobs, map<string, Employee*>> p : employeesMap) {
+       Jobs job = p.first;
+       for(pair<string, Employee*> p2 : p.second) {
+           // get all relevant detains for this employee
+           string id = p2.first;
+           string employerID = p2.second->getEmployer()->getID();
+           int seniority = p2.second->getSeniority();
+           int bYear = p2.second->getBirthYear();
+
+           string employeeLine;
+
+           ss << id; // ID
+           ss << SPACE;
+           ss << parseJobToString(job); // JOB TITLE
+           ss << SPACE;
+           ss << seniority; // SENIORITY
+           ss << SPACE;
+           ss << bYear; // BIRTH YEAR
+           ss << SPACE;
+           ss << employerID; // EMLOYER ID
+           ss << endl;
+
+           writeStrToFile(ss.str(), EMPLOYEE_FP);
+       }
+    }
+}
+
+/**
+ * parseCustomersToFile(map<string, Customer *> customersMap).
+ *
+ * @param customersMap map<string, Customer *> -- customers map.
+ */
+void ParseHandling::parseCustomersToFile(map<string, Customer *> customersMap) {
+    stringstream ss;
+
+    for(pair<string, Customer*> p : customersMap) {
+        ss << p.first; // ID
+        ss << SPACE;
+        ss << p.second->getFullName(); // FULL_NAME
+        ss << SPACE;
+        ss << p.second->getPriority(); // PRIORITY
+
+        writeStrToFile(ss.str(), CUSTOMER_FP);
+    }
+}
+
+/**
+ * parseFlightsToFile(map<string, Flight *> flightsMap).
+ *
+ * @param flightsMap map<string, Flight *> -- a flights map.
+ */
+void ParseHandling::parseFlightsToFile(map<string, Flight *> flightsMap) {
+    stringstream ssFlight;
+    stringstream ssAssign;
+
+    for(pair<string, Flight*> p : flightsMap) {
+        ssFlight << p.first; // ID
+        ssFlight << SPACE;
+        ssFlight << ((MyFlight*)p.second)->getPlane()->getID(); // PLANE ID
+        ssFlight << SPACE;
+        ssFlight << p.second->getModelNumber(); // MODEL NUMBER
+        ssFlight << SPACE;
+        ssFlight << p.second->getDate().getDate(); // DATE TO STRING
+        ssFlight << SPACE;
+        ssFlight << p.second->getSource();
+        ssFlight << SPACE;
+        p.second->getDestination();
+        ssFlight << endl;
+
+        for(Employee* emp : p.second->getAssignedCrew()) {
+            ssAssign << p.first; // PLANE ID
+            ssAssign << SPACE;
+            ssAssign << emp->getID(); // EMPLOYEE ID
+            ssAssign << endl;
+        }
+
+        writeStrToFile(ssAssign.str(), ASSIGNMENTS_FILE); // write employees to Assignments.txt
+        writeStrToFile(ssFlight.str(), FLIGHTS_FP); // write flight to Flights.txt
+    }
+}
+
+/**
+ * parsePlanesToFile(map<string, Plane *> planesMap).
+ *
+ * @param planesMap map<string, Plane *> -- planes map.
+ */
+void ParseHandling::parsePlanesToFile(map<string, Plane *> planesMap) {
+    stringstream ss;
+
+    for (pair<string, Plane *> p : planesMap) {
+        ss << p.first; // ID
+        ss << SPACE;
+        ss << p.second->getModelNumber(); // MODEL NUMBER
+        ss << SPACE;
+        ss << p.second->getMaxFirstClass(); // MAX FIRST
+        ss << SPACE;
+        ss << p.second->getMaxEconomyClass(); // MAX ECONOMY
+        ss << endl;
+
+        writeStrToFile(ss.str(), PLANES_FP);
+    }
+}
+
+/**
+ * parseReservationsToFile(map<string, Reservation *> reservationsMap).
+ *
+ * @param reservationsMap map<string, Reservation *> -- reservations map.
+ */
+void ParseHandling::parseReservationsToFile(map<string, Reservation *> reservationsMap) {
+    stringstream ss;
+
+    for(pair<string, Reservation *> p : reservationsMap) {
+        ss << p.first; // ID
+        ss << SPACE;
+        ss << p.second->getCustomer()->getID(); // CUSTOMER ID
+        ss << SPACE;
+        ss << p.second->getFlight()->getID(); // FLIGHT ID
+        ss << SPACE;
+        ss << parseClassToStr(p.second->getClass());// CLASS
+        ss << SPACE;
+        ss << p.second->getMaxBaggage(); // MAX BAGGAGE
+        ss << endl;
+
+        writeStrToFile(ss.str(), RESERVATIONS_FP);
+    }
+}
+
 ///---------- UTILITY ----------
 /**
  * identifyID(const string& id).
@@ -518,4 +664,51 @@ Jobs ParseHandling::parseJobFromString(const string& jobStr) {
 
     // otherwise - return other
     return OTHER;
+}
+
+/**
+ * parseJobToString(Jobs job).
+ *
+ * @param job Jobs -- a job type
+ * @return a string representation of the job type
+ */
+string ParseHandling::parseJobToString(Jobs job) {
+    switch(job) {
+        case MANAGER:
+            return "MANAGER";
+        case PILOT:
+            return "PILOT";
+        case FLY_ATTENDANT:
+            return "FLY_ATTENDANT";
+        case NAVIGATOR:
+            return "NAVIGATOR";
+        default:
+            return "OTHER";
+    }
+}
+
+/**
+ * writeToFile(stringstream ss, const string& str)
+ *
+ * @param str const string& -- a constant string to write.
+ * @param str string -- the file path.
+ */
+void ParseHandling::writeStrToFile(const string &str, const string &fp) {
+    ofstream outfile;
+
+    outfile.open(fp, std::ios_base::app);
+    outfile << str;
+}
+
+/**
+ * parseClassToStr(Classes cls).
+ *
+ * @param cls Class -- the class
+ * @return a string representation of the class
+ */
+string ParseHandling::parseClassToStr(Classes cls) {
+    switch(cls) {
+        case FIRST_CLASS: return "FIRST_CLASS";
+        case SECOND_CLASS: return "SECOND_CLASS";
+    }
 }

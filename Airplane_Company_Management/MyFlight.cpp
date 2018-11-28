@@ -34,10 +34,17 @@ MyFlight::MyFlight(Descriptor& desc, int modelNumber,
     this->destination   = destination;
     this->modelNumber   = modelNumber;
     this->reservations  = reservations;
-    this->assignedCrew     = employeesList;
+    this->assignedCrew  = employeesList;
 }
 
 /// ---------- GETTERS & SETTERS ----------
+
+/**
+ * getPlane()
+ *
+ * @return return a ptr to this plane
+ */
+Plane* MyFlight::getPlane() { return this->plane; }
 
 /**
  * isFirstClassFullyBooked().
