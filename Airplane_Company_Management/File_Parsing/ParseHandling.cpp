@@ -468,6 +468,12 @@ void ParseHandling::parseEmployeesToFile(map<Jobs, map<string, Employee *>> empl
     for (pair<Jobs, map<string, Employee *>> p : employeesMap) {
         Jobs job = p.first;
         for (pair<string, Employee *> p2 : p.second) {
+            // try to get employee from file
+            Employee* checkEmpExists = getEmployeeByEmployeeID(p2.first);
+
+            if(checkEmpExists != nullptr)
+                continue;
+
             stringstream ss;
             // get all relevant detains for this employee
             string id = p2.first;

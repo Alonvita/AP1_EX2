@@ -197,19 +197,19 @@ Flight* MyImplementation::addFlight(int model_number, Date date, string source, 
     if(employees.empty())
         throw runtime_error("Cannot find crew for this flight.");
     // --- GENERATE CREW ---
+
     // create a flight with an empty reservation list
     Descriptor desc = this->factory->giveFlightDescriptor();
 
+    list<Reservation*> reservations;
+
     // --- GENERATE RESERVATIONS ---
-    list<Reservation*> reservations = generateReservationsForFlight(desc.getID());
+    //reservations = generateReservationsForFlight(desc.getID());
     // --- GENERATE RESERVATIONS ---
 
 
     // add all reservations to the flight's reservations list
     Flight* newFlight = new MyFlight(desc, model_number, reservations, employees, date, source, destination, plane);
-
-    // reduce available planes counter before creating new flight
-    //this->availablePlanesTable.at(plane->getModelNumber()).first--;
 
     // Add the new object to the flights list
     this->flightsMap.insert(make_pair(newFlight->getID(), newFlight));
@@ -286,6 +286,7 @@ Reservation* MyImplementation::addResevation(string customerId, string flightId,
 
     // get flight
     Flight* f = this->getFlight(flightId);
+
     // check exists
     if(f == nullptr)
         throw runtime_error("Flight doesn't exist.");
@@ -381,9 +382,10 @@ list<Employee*> MyImplementation::findCrewForFlight(map<Jobs, int> crewNeeded, D
         int membersFound = 0;
         int membersNeeded = j.second;
 
-        // check if an employee for this job even exists
-        if(this->employeesMap.find(j.first) == this->employeesMap.end()) {
-            // employee for job doesn't exist yet - return an empty vector
+        auto it = this->employeesMap.find(j.first);
+        if(it == this->employeesMap.end()) {
+            // employee for job doesn't exist yet - return an empty list
+            crew.clear();
             return crew;
         }
 
