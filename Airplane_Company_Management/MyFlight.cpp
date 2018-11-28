@@ -39,6 +39,38 @@ MyFlight::MyFlight(DescriptorsFactory* factoryPtr, int modelNumber,
     this->employees     = employeesList;
 }
 
+/**
+ * MyFlight(int modelNumber,
+               list<Employee *> &employeesList,
+               Date date, string& source,
+               string& destination).
+ *
+ * @param factoryPtr DescriptionFactory -- a pointer to a DescriptionFactory.
+ * @param modelNumber int -- the model of the Plane for the MyFlight.
+ * @param employeesList list<Employee*> -- a list of employees.
+ * @param date Date -- the MyFlight date.
+ * @param source string& -- a reference to the string representing the source of the MyFlight.
+ * @param destination string& -- a reference to the string representing MyFlight's destination
+ */
+MyFlight::MyFlight(DescriptorsFactory* factoryPtr, int modelNumber,
+                   list<Employee *> &employeesList, Date date,
+                   string &src, string & dest, Plane* plane) : flightDate(date) {
+    // initialize Descriptor
+    this->initializeID(factoryPtr);
+
+    // get the date string
+    string dateStr = date.getDate();
+
+    // initialize the rest of the fields
+    this->plane         = plane;
+    this->source        = src;
+    this->flightDate    = Date(date);
+    this->destination   = dest;
+    this->modelNumber   = modelNumber;
+    this->employees     = employeesList;
+    this->reservations = list<Reservation*>;
+}
+
 /// ---------- INITIALIZATION ----------
 
 /**
@@ -51,6 +83,7 @@ void MyFlight::initializeID(DescriptorsFactory* factoryPtr) {
 }
 
 /// ---------- GETTERS & SETTERS ----------
+
 /**
  * addReservation(Reservation*).
  *

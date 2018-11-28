@@ -16,6 +16,7 @@ class Reservation;
 class MyFlight : public Flight {
 public:
     /// ---------- CONSTRUCTORS - DESCRUCTORS ----------
+    MyFlight(DescriptorsFactory*, int, list<Employee *>&, Date, string&, string&, Plane*);
     MyFlight(DescriptorsFactory*, int, list<Reservation *> &, list<Employee *>&, Date, string&, string&, Plane*);
     ~MyFlight() override;
 

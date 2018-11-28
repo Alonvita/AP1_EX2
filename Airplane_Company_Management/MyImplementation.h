@@ -57,10 +57,11 @@ public:
                                Classes cls, int max_baggage) override;
 
     /// ---------- UTILITY ----------
-    bool            isEmployeeAvailableOn           (string&, Date);
-    Plane*          findAvailablePlaneInSystem      (int, Date);
-    vector<Flight*> getFlightsForEmployee           (string&);
-    template <class T> vector<T>   findCrewForFlight               (vector<Jobs>, Date);
+    bool isEmployeeAvailableOn (string&, Date);
+    Plane* findAvailablePlaneInSystem (int, Date);
+    vector<Flight*> getFlightsForEmployee (string&);
+    list<Employee*> findCrewForFlight (map<Jobs, int>, Date);
+    list<Reservation*> generateReservationsForFlight(string fid);
 
     void exit() override;
 };

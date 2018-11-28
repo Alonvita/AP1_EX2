@@ -16,7 +16,7 @@
  * @param maxBaggage int -- the max baggage for the MyReservation.
  */
 MyReservation::MyReservation(DescriptorsFactory* factoryPtr, Customer* costumer,
-                        Flight *flight, Classes cls, int maxBaggage) {
+                             Flight *flight, Classes cls, int maxBaggage) {
 
     // Initialize Descriptor
     this->initializeID(factoryPtr);
