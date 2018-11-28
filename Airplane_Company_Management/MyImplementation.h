@@ -22,18 +22,19 @@
 #include "File_Parsing/ParseHandling.h"
 #include "Descriptors/DescriptorsFactory.h"
 
+#define PAIR_FROM_PLANE_MAP pair<int, map<string, Plane*>>
+#define STRING_PLANE_MAP_PAIR pair<string, Plane*>
 
 class MyImplementation : public Ex2 {
 private:
     ParseHandling parseHandling;
-    map<int, pair<int, Plane*>>     availablePlanesTable;
 
-    DescriptorsFactory*               factory;
-    map<string, Plane*>               planesMap;
-    map<string, Flight*>              flightsMap;
-    map<string, Customer*>            customersMap;
-    map<Jobs, map<string, Employee*>> employeesMap;
-    map<string, Reservation*>         reservationsMap;
+    DescriptorsFactory*                 factory;
+    map<string, Flight*>                flightsMap;
+    map<string, Customer*>              customersMap;
+    map<string, Reservation*>           reservationsMap;
+    map<Jobs, map<string, Employee*>>   employeesMap;
+    map<int, map<string, Plane*>>       availablePlanesTable;
 
 
 public:

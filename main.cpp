@@ -28,7 +28,9 @@ int main() {
 
 
     Plane* p1 = myImplementation->addPlane(p1Model, p1crewNeeded, seats);
+    cout << "DEBUG: Plane1 Added: " << p1->getID() << endl;
     Plane* p2 = myImplementation->addPlane(p1Model, p1crewNeeded, seats);
+    cout << "DEBUG: Plane2 Added: " << p2->getID() << endl;
 
     // ---- END PLANE 1 ----
 
@@ -36,49 +38,62 @@ int main() {
     string fullName = "Alon Vita";
     int priority = 1;
 
-    myImplementation->addCustomer(fullName, priority);
+    Customer* c1 = myImplementation->addCustomer(fullName, priority);
+
+    cout << "DEBUG: Customer1 Added: " << c1->getID() << endl;
     // ---- END CUSTOMER 1 ----
     // ---- CUSTOMER 2 ----
     fullName = "Evya Shtern";
     priority = 2;
 
-    myImplementation->addCustomer(fullName, priority);
+    Customer* c2 = myImplementation->addCustomer(fullName, priority);
+
+    cout << "DEBUG: Customer2 Added: " << c2->getID() << endl;
     // ---- END CUSTOMER 2 ----
     // ---- CUSTOMER 3 ----
     fullName = "Ofek Israel";
     priority = 3;
 
-    myImplementation->addCustomer(fullName, priority);
+    Customer* c3 = myImplementation->addCustomer(fullName, priority);
+
+    cout << "DEBUG: Customer3 Added: " << c3->getID() << endl;
     // ---- END CUSTOMER 3 ----
     // ---- CUSTOMER 4 ----
     fullName = "David Vita";
     priority = 4;
 
-    myImplementation->addCustomer(fullName, priority);
+    Customer* c4 = myImplementation->addCustomer(fullName, priority);
+
+    cout << "DEBUG: Customer4 Added: " << c4->getID() <<endl;
     // ---- END CUSTOMER 4 ----
 
-
-    // ---- EMPLOYEE 1 ----
+    // ---- EMPLOYEE 0 ----
     int seniority = 1;
     int bYear = 1993;
     string employerID = "EID1234";
     Jobs job = MANAGER;
 
-    myImplementation->addEmployee(seniority, bYear, employerID, job);
+    Employee* emp0 = myImplementation->addEmployee(seniority, bYear, employerID, job);
+    // ---- EMPLOYEE 0 ----
+
     // ---- EMPLOYEE 1 ----
     seniority = 2;
     bYear = 1990;
     employerID = "EID0";
     job = FLY_ATTENDANT;
 
-    myImplementation->addEmployee(seniority, bYear, employerID, job);
+    Employee* emp1 = myImplementation->addEmployee(seniority, bYear, employerID, job);
+    cout << "DEBUG: Employee1 Added: " << emp1->getID() << endl;
+    // ---- EMPLOYEE 1 ----
+
     // ---- EMPLOYEE 2 ----
     seniority = 93;
     bYear = 1880;
     employerID = "EID0";
     job = PILOT;
 
-    myImplementation->addEmployee(seniority, bYear, employerID, job);
+    Employee* emp2 = myImplementation->addEmployee(seniority, bYear, employerID, job);
+    cout << "DEBUG: Employee2 Added: " << emp2->getID() << endl;
     // ---- EMPLOYEE 2 ----
 
     // ---- EMPLOYEE 3 ----
@@ -87,7 +102,8 @@ int main() {
     job = PILOT;
     employerID = "EID0";
 
-    myImplementation->addEmployee(seniority, bYear, employerID, job);
+    Employee* emp3 = myImplementation->addEmployee(seniority, bYear, employerID, job);
+    cout << "DEBUG: Employee3 Added: " << emp3->getID() << endl;
     // ---- EMPLOYEE 3 ----
 
     // ---- EMPLOYEE 4 ----
@@ -96,7 +112,9 @@ int main() {
     job = NAVIGATOR;
     employerID = "EID2";
 
-    myImplementation->addEmployee(seniority, bYear, employerID, job);
+    Employee* emp4 = myImplementation->addEmployee(seniority, bYear, employerID, job);
+
+    cout << "DEBUG: Employee4 Added: " << emp4->getID() << endl;
     // ---- EMPLOYEE 4 ----
 
     // ---- TEST DATES ----
@@ -106,16 +124,21 @@ int main() {
     Date d3 = Date("1993-11-10");
     Date d4 = Date("1993-10-11");
 
-    if(d == d1) cout << "DATE TEST 1 PASSED" << endl;
-    if(d > d2) cout << "DATE TEST 2 PASSED" << endl;
-    if(d < d3) cout << "DATE TEST 3 PASSED" << endl;
-    if(d < d4) cout << "DATE TEST 4 PASSED" << endl;
+    if(d == d1) cout << "DEBUG: DATE TEST 1 PASSED" << endl;
+    if(d > d2) cout << "DEBUG: DATE TEST 2 PASSED" << endl;
+    if(d < d3) cout << "DEBUG: DATE TEST 3 PASSED" << endl;
+    if(d < d4) cout << "DEBUG: DATE TEST 4 PASSED" << endl;
 
     // ---- END TEST DATES ----
 
+    Flight* f1 = myImplementation->addFlight(747, d, "israel", "metula");
 
+    cout << "DEBUG: Flight Added: " << f1->getID() << endl;
 
-    cout << d.getDate();
+    Flight* f2 = myImplementation->addFlight(747, d, "israel", "metula");
+    cout << "DEBUG: Flight Added: " << f2->getID() << endl;
+    Flight* f3 = myImplementation->addFlight(747, d, "israel", "metula");
+    cout << "DEBUG: Flight Added: " << f3->getID() << endl;
 
-    myImplementation->addFlight(747, d, "israel", "metula");
+    //myImplementation->addResevation();
 }

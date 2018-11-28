@@ -52,13 +52,18 @@ Customer* MyImplementation::getCustomer(string id) {
  * @return a pointer to the plane associated with this ID, or nullptr;
  */
 Plane* MyImplementation::getPlane(string id) {
-    // find a plane
-    auto it = planesMap.find(id);
+    // for every model
+    for(PAIR_FROM_PLANE_MAP p : availablePlanesTable) {
+        // find look for the plane
+        auto it = p.second.find(id);
 
-    if(it != planesMap.end())
-        return it->second;
+        // if found -> return the Plane*
+        if (it != p.second.end())
+            return it->second;
 
-    return this->parseHandling.getPlaneByPlaneID(id);
+        // otherwise try loading from file
+        return this->parseHandling.getPlaneByPlaneID(id);
+    }
 }
 
 /**
@@ -204,7 +209,7 @@ Flight* MyImplementation::addFlight(int model_number, Date date, string source, 
     Flight* newFlight = new MyFlight(desc, model_number, reservations, employees, date, source, destination, plane);
 
     // reduce available planes counter before creating new flight
-    this->availablePlanesTable.at(plane->getModelNumber()).first--;
+    //this->availablePlanesTable.at(plane->getModelNumber()).first--;
 
     // Add the new object to the flights list
     this->flightsMap.insert(make_pair(newFlight->getID(), newFlight));
@@ -229,23 +234,35 @@ Plane* MyImplementation::addPlane(int model_number, map<Jobs, int> crew_needed, 
 
     // search if the plane model is already in the system
     auto it = availablePlanesTable.find(model_number);
-    if(it != availablePlanesTable.end()) {
-        // increate the counter for the plane
-        it->second.first++;
 
-        return it->second.second;
+    // if exists ->
+    if(it != availablePlanesTable.end()) {
+        // get descriptor
+        Descriptor desc = this->factory->givePlaneDescriptor();
+
+        // create plane instance
+        Plane* p = new MyPlane(desc, model_number, crew_needed, max_economy, max_first);
+
+        // insert to the map
+        it->second.insert(make_pair(p->getID(), p));
+
+        return p;
     }
 
-    // create a new instance of the object
+    // MODEL DOESN'T EXIST YET
+
+    // get descriptor
     Descriptor desc = this->factory->givePlaneDescriptor();
 
+    // create a new Plane
     Plane* newPlane = new MyPlane(desc, model_number, crew_needed, max_economy, max_first);
 
-    // map entry for counter + 1
-    this->availablePlanesTable.insert(make_pair(model_number, make_pair(1, newPlane)));
+    // create the map
+    map<string, Plane*> mapForModel;
+    mapForModel.insert(make_pair(newPlane->getID(), newPlane));
 
-    // add the new object to the planes list
-    this->planesMap.insert(make_pair(newPlane->getID(), newPlane));
+    // push a new entry to the map, containing the int and the string->Plane*
+    this->availablePlanesTable.insert(make_pair(model_number, mapForModel));
 
     return newPlane;
 }
@@ -285,8 +302,6 @@ Reservation* MyImplementation::addResevation(string customerId, string flightId,
             throw runtime_error("Flight's Economy Class is fully booked.");
     }
 
-    //TODO: need to check the max_baggage issue...
-
     // create a new reservation
     Descriptor desc = this->factory->giveReservationDescriptor();
     Reservation* newReservation = new MyReservation(desc, customer, f, cls, max_baggage);
@@ -310,28 +325,30 @@ Reservation* MyImplementation::addResevation(string customerId, string flightId,
  * @return Plane ptr if an available plane was found for this date.
  */
 Plane* MyImplementation::findAvailablePlaneInSystem(int model_number, Date date) {
-    bool booked = false;
-
-    // look if there's an available plane for this model number
-    if(this->availablePlanesTable.find(model_number) == this->availablePlanesTable.end())
+    // look if there's an available vector for this model
+    auto it = this->availablePlanesTable.find(model_number);
+    if (it == this->availablePlanesTable.end())
         return nullptr;
 
-    // iterate over the map
-    for(pair<string, Plane*> p : this->planesMap) {
-        MyPlane* plane = ((MyPlane *) p.second);
+    // for every plane in the vector found
+    for (STRING_PLANE_MAP_PAIR spPair : it->second) {
+        // false by default
+        bool booked = false;
 
-        // check every plane model
-        if (plane->getModelNumber() == model_number) {
-            // plane was found -> check the dates
-            for (const Date& bookedDate : plane->getBookedDates()) {
-                // the date is booked -> mark as booked
-                if (bookedDate == date)
-                    booked = true;
-            }
+        //check if date is taken
+        for (const Date &bookedDate : ((MyPlane*)spPair.second)->getBookedDates()) {
+            // the date is booked -> mark as booked
+            if (bookedDate == date)
+                booked = true;
+        }
 
-            // if not booked, return the plane
-            if (!booked)
-                return plane;
+        // not booked -> return the plane
+        if (!booked) {
+            MyPlane* mPlane = ((MyPlane*)spPair.second);
+            // book the date
+            mPlane->bookFlightOn(date);
+            // return
+            return mPlane;
         }
     }
 
