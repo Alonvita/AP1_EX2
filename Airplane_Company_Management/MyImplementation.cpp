@@ -297,6 +297,7 @@ Plane* MyImplementation::addPlane(int model_number, map<Jobs, int> crew_needed, 
 Reservation* MyImplementation::addResevation(string customerId, string flightId, Classes cls, int max_baggage) {
     // get customer
     Customer* customer = this->getCustomer(customerId);
+
     // check exists
     if(customer == nullptr)
         throw runtime_error("Customer doesn't exist.");
@@ -328,7 +329,7 @@ Reservation* MyImplementation::addResevation(string customerId, string flightId,
     ((MyFlight*)f)->addReservation(newReservation);
 
     // update Customer with the new reservation
-    ((MyCustomer*) customer)->addReservation(newReservation);
+    ((MyCustomer*)customer)->addReservation(newReservation);
 
     this->reservationsMap.insert(make_pair(newReservation->getID(), newReservation));
 }

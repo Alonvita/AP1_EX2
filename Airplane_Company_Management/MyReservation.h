@@ -27,6 +27,7 @@ public:
     Classes     getClass() override;
     Flight*     getFlight() override;
     Customer*   getCustomer() override;
+    void        associateToFlight(Flight*);
 
 private:
     Classes     cls;

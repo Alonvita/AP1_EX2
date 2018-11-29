@@ -29,6 +29,15 @@ MyReservation::MyReservation(Descriptor& desc, Customer* costumer,
 
 /// ---------- GETTERS & SETTERS ----------
 /**
+ * associateToFlight(Flight *f).
+ *
+ * @param f Flight* -- a pointer to a flight.
+ */
+void MyReservation::associateToFlight(Flight *f) {
+    this->flight = f;
+}
+
+/**
  * getID().
  *
  * @return the MyReservation's ID.

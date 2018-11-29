@@ -95,8 +95,8 @@ bool MyFlight::isEconomyClassFullyBooked() {
  * @param reservation Reservation* -- a reservation ptr.
  */
 void MyFlight::addReservation(Reservation* reservation) {
-    this->reservations.push_back(reservation);
     this->currentBaggageWeight += reservation->getMaxBaggage();
+    this->reservations.push_back(reservation);
 }
 
 /**

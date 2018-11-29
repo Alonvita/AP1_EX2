@@ -162,7 +162,7 @@ Customer* ParseHandling::getCustomerByCustomerID(const string& cid) {
 
         string name = fullName.str();
 
-        auto customer = new MyCustomer(desc, name, stoi(splitLine.at(3)), rList);
+        return new MyCustomer(desc, name, stoi(splitLine.at(3)), rList);
     }
 }
 
@@ -343,7 +343,13 @@ Flight* ParseHandling::getFlightByFlightID(const string &fid) {
             if(p == nullptr)
                 throw runtime_error("There is no plane associated with this flight.");
 
-            return new MyFlight(desc, modelNum, rList, eList, date, src, dest, p);
+            Flight* flight501 = new MyFlight(desc, modelNum, rList, eList, date, src, dest, p);
+
+            // associate flight to all reservations
+            for(Reservation* r : rList)
+                ((MyReservation*)r)->associateToFlight(flight501);
+
+            return flight501;
         }
     }
 
@@ -398,7 +404,7 @@ list<Reservation*> ParseHandling::generateReservationsByCustomerID(const string 
     // Local Variables
     ifstream planesFile(RESERVATIONS_FP);
     vector<string> vec;
-    list<Reservation*> reservationsForCustomer;
+    list<Reservation*> reservationsForCustomer = list<Reservation*>();
 
     string l;
     // for each line
@@ -415,16 +421,22 @@ list<Reservation*> ParseHandling::generateReservationsByCustomerID(const string 
         if (strcmp(cid.c_str(), cidForRes.c_str()) == 0) {
             // if so, get all relevant information
             Descriptor desc = Descriptor(splitLine.at(0));
-            Customer* customer = getCustomerByCustomerID(cid);
-            Flight* flight = getFlightByFlightID(splitLine.at(2));
-            Classes cls = parseStringToClass(splitLine.at(3));
+            Customer* customer = getCustomerForReservation(cid); // CREATE A CUSTOMER
+            Flight* flight = getFlightForReservation(splitLine.at(2));  // CREATE FLIGHT
+            Classes cls = parseStringToClass(splitLine.at(3)); // CREATE CLASSES
             int maxBaggage = stoi(splitLine.at(4));
 
             // create the new class and push it into the list
-            reservationsForCustomer.push_back(
-                    new MyReservation(desc, customer,flight, cls, maxBaggage));
+            Reservation* r = new MyReservation(desc, customer,flight, cls, maxBaggage);
+
+            // add the reservation to the customer and flight found
+            ((MyFlight*)flight)->addReservation(r);
+            ((MyCustomer*)customer)->addReservation(r);
+
+            reservationsForCustomer.push_back(r);
         }
     }
+    return reservationsForCustomer;
 }
 
 /**
@@ -456,15 +468,15 @@ list<Reservation*> ParseHandling::generateReservationsByFlightID(const string &f
             // if so, get all relevant information
             Descriptor desc = Descriptor(splitLine.at(0));
             Customer *customer = getCustomerByCustomerID(splitLine.at(1));
-            Flight *flight = getFlightByFlightID(fid);
+            Flight *flight = nullptr; // init with null PTR -> will be associated later.
             Classes cls = parseStringToClass(splitLine.at(3));
             int maxBaggage = stoi(splitLine.at(4));
 
             // create the new class and push it into the list
-            reservationsForFlight.push_back(
-                    new MyReservation(desc, customer, flight, cls, maxBaggage));
+            reservationsForFlight.push_back(new MyReservation(desc, customer, flight, cls, maxBaggage));
         }
     }
+    return reservationsForFlight;
 }
 
 /**
@@ -1014,4 +1026,98 @@ vector<Date> ParseHandling::parseDatesVectorFromFile(const string &) {
             return datesVec;
         }
     }
+}
+
+/**
+ * getCustomerForReservation(const string& cid).
+ *
+ * @param cid const string& -- a customer ID.
+ * @return a new customer generated from file with this ID.
+ */
+Customer* ParseHandling::getCustomerForReservation(const string& cid) {
+    if(!fileExists(CUSTOMER_FP))
+        return nullptr;
+
+    // Local Variables
+    Line line;
+    ifstream file(CUSTOMER_FP);
+    vector<string> vec;
+
+    string l;
+    // for each line
+    while(getline(file, l)) {
+        // get istringstream of the line
+        istringstream iss(l);
+
+        // turn it into a vector separated by words
+        vector<string> splitLine(istream_iterator<string>{iss},
+                                 istream_iterator<string>());
+
+        // create a new Customer
+        Descriptor desc = Descriptor(cid);
+
+        // initialize an empty list
+        list<Reservation*> rList = list<Reservation*>();
+
+        // get full name
+        stringstream fullName;
+        fullName << splitLine.at(1);
+        fullName << SPACE;
+        fullName << splitLine.at(2);
+
+        string name = fullName.str();
+
+        return new MyCustomer(desc, name, stoi(splitLine.at(3)), rList);
+    }
+}
+
+/**
+ * getFlightForReservation(const string &fid).
+ *
+ * @param fid const string& -- a flight id.
+ * @return
+ */
+Flight* ParseHandling::getFlightForReservation(const string &fid) {
+    if(!fileExists(FLIGHTS_FP))
+        return nullptr;
+
+    // Local Variables
+    ifstream flightsF(FLIGHTS_FP);
+    vector<string> vec;
+    list<Employee *> employeesForThisFlight;
+
+    string l;
+    // for each line
+    while (getline(flightsF, l)) {
+        // get istringstream of the line
+        istringstream iss(l);
+
+        // turn it into a vector separated by words
+        vector<string> splitLine(istream_iterator<string>{iss},
+                                 istream_iterator<string>());
+
+        // if Flight ID was found
+        if (strcmp(fid.c_str(), splitLine.at(0).c_str()) == 0) {
+            // generate relevant information
+            Descriptor desc = Descriptor(fid); // FLIGHT ID
+            string pid = splitLine.at(1); // PLANE ID -> get plane below
+            int modelNum = stoi(splitLine.at(2)); // MODEL NUMBER
+            Date date = splitLine.at(3);     // FLIGHT DATE
+            string src = splitLine.at(4);    // SOURCE
+            string dest = splitLine.at(5);   // DESTINATION
+
+            // initialize an empty reservation list
+            list<Reservation*> rList = list<Reservation*>();
+            list<Employee*> eList = generateEmployeesByFlightID(fid);
+            Plane* p = getPlaneByFlightID(fid);
+
+            if(p == nullptr)
+                throw runtime_error("There is no plane associated with this flight.");
+
+            return new MyFlight(desc, modelNum, rList, eList, date, src, dest, p);
+        }
+    }
+
+    // no flight was found -> return nullptr;
+    return nullptr;
 }
