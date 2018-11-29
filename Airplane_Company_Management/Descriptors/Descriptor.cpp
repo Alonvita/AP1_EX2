@@ -13,7 +13,7 @@
  */
 Descriptor::Descriptor(const string& fullID) {
     this->identifier = fullID.substr(0, 3); // from fullID[0] take first 3 chars
-    this->ID = fullID.substr(4); // from fullID[4] take the rest
+    this->ID = fullID.substr(3); // from fullID[4] take the rest
 }
 
 /**
