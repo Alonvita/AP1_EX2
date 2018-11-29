@@ -36,6 +36,12 @@ private:
     map<Jobs, map<string, Employee*>>   employeesMap;
     map<int, map<string, Plane*>>       availablePlanesTable;
 
+    /// ---------- UTILITY ----------
+    bool isEmployeeAvailableOn (string&, Date);
+    Plane* findAvailablePlaneInSystem (int, Date);
+    vector<Flight*> getFlightsForEmployee (string&);
+    list<Reservation*> generateReservationsForFlight(string);
+    list<Employee*> findCrewForFlight (map<Jobs, int>, Date);
 
 public:
     MyImplementation();
@@ -60,12 +66,12 @@ public:
     Reservation* addResevation(string customerId, string flightId,
                                Classes cls, int max_baggage) override;
 
-    /// ---------- UTILITY ----------
-    bool isEmployeeAvailableOn (string&, Date);
-    Plane* findAvailablePlaneInSystem (int, Date);
-    vector<Flight*> getFlightsForEmployee (string&);
-    list<Reservation*> generateReservationsForFlight(string);
-    list<Employee*> findCrewForFlight (map<Jobs, int>, Date);
+    /// ---------- "UPLOAD" FROM FILE ----------
+    void uploadFlight(Flight*);
+    void uploadPlane(Plane*);
+    void uploadCustomer(Customer*);
+    void uploadEmployee(Employee*);
+    void uploadReservation(Reservation*);
 
     void exit() override;
 };

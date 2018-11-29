@@ -5,6 +5,12 @@ set(CMAKE_CXX_STANDARD 14)
 
 set(MAIN main.cpp)
 
+set(TESTERS
+        # CHECK ADDITING & CREATING
+        CheckAdditionCreation.cpp CheckAdditionCreation.h
+        # CHECK GETTERS
+        checkGetters.cpp checkGetters.h)
+
 set(AIRPLANE_MANAGEMENT
         # MyImplementation
         Airplane_Company_Management/MyImplementation.cpp Airplane_Company_Management/MyImplementation.h
@@ -37,4 +43,4 @@ set(AIRPLANE_MANAGEMENT
         # OperatorsHandling
         Airplane_Company_Management/Utility/OperatorsHandling.cpp Airplane_Company_Management/Utility/OperatorsHandling.h)
 
-add_executable(ex2 ${AIRPLANE_MANAGEMENT} ${MAIN})
+add_executable(ex2 ${AIRPLANE_MANAGEMENT} ${MAIN} ${TESTERS})

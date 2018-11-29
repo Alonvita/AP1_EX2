@@ -27,7 +27,9 @@ Flight* MyImplementation::getFlight(string id) {
         return it->second;
 
     // else - try getting it from the file
-    return this->parseHandling.getFlightByFlightID(id);
+    Flight* f = this->parseHandling.getFlightByFlightID(id);
+    uploadFlight(f);
+    return f;
 }
 
 /**
@@ -42,7 +44,10 @@ Customer* MyImplementation::getCustomer(string id) {
     if(it != customersMap.end())
         return it->second;
 
-    return parseHandling.getCustomerByCustomerID(id);
+    Customer* cust = parseHandling.getCustomerByCustomerID(id);
+    // UPLOAD
+    uploadCustomer(cust);
+    return cust;
 }
 
 /**
@@ -61,9 +66,15 @@ Plane* MyImplementation::getPlane(string id) {
         if (it != p.second.end())
             return it->second;
 
-        // otherwise try loading from file
-        return this->parseHandling.getPlaneByPlaneID(id);
     }
+
+    // otherwise try loading from file
+    Plane* plane = this->parseHandling.getPlaneByPlaneID(id);
+
+    uploadPlane(plane);
+
+    // return the plane
+    return plane;
 }
 
 /**
@@ -86,7 +97,10 @@ Employee* MyImplementation::getEmployee(string id) {
         }
     }
 
-    return parseHandling.getEmployeeByEmployeeID(id);
+    Employee* emp = parseHandling.getEmployeeByEmployeeID(id);
+    // upload employee
+    uploadEmployee(emp);
+    return emp;
 }
 
 /**
@@ -101,7 +115,10 @@ Reservation* MyImplementation::getReservation(string id) {
     if(it != reservationsMap.end())
         return it->second;
 
-    return parseHandling.getReservationByReservationID(id);
+    Reservation* res = parseHandling.getReservationByReservationID(id);
+    uploadReservation(res);
+
+    return res;
 }
 
 /// ---------- SETTERS ----------
@@ -491,6 +508,85 @@ list<Reservation*> MyImplementation::generateReservationsForFlight(string fid) {
 
     // TODO: need to check from file as well!
     return reservationsForFlight;
+}
+
+/// ---------- "UPLOAD" FROM FILES ----------
+
+/**
+ * uploadFlight(Flight *).
+ */
+void MyImplementation::uploadFlight(Flight *f) {
+    if(f == nullptr)
+        return;
+
+    this->flightsMap.insert(make_pair(f->getID(), f));
+}
+
+/**
+ * uploadCustomer(Customer *).
+ */
+void MyImplementation::uploadCustomer(Customer * cust) {
+    if(cust == nullptr)
+        return;
+
+    this->customersMap.insert(make_pair(cust->getID(), cust));
+}
+
+/**
+ * uploadReservation(Reservation *)
+ */
+void MyImplementation::uploadReservation(Reservation * r) {
+    if(r == nullptr)
+        return;
+
+    // add reservation
+    this->reservationsMap.insert(make_pair(r->getID(), r));
+}
+
+/**
+ * uploadEmployee(Employee *).
+ */
+void MyImplementation::uploadEmployee(Employee * emp) {
+    if(emp == nullptr)
+        return;
+
+    //check if job exists
+    auto it = this->employeesMap.find(emp->getTitle());
+
+    // if exists -> add it under the job title
+    if(it != this->employeesMap.end()) {
+        it->second.insert(make_pair(emp->getID(), emp));
+        return;
+    }
+
+    // otherwise, create a new map and put it nder the title
+    map<string, Employee*> empMap;
+    empMap.insert(make_pair(emp->getID(), emp));
+
+    this->employeesMap.insert(make_pair(emp->getTitle(), empMap));
+}
+
+/**
+ * uploadPlane(Plane *).
+ */
+void MyImplementation::uploadPlane(Plane * p) {
+    if(p == nullptr)
+        return;
+
+    // check if model already exists
+    auto it = this->availablePlanesTable.find(p->getModelNumber());
+
+    // model exists -> add plane under model number
+    if(it != this->availablePlanesTable.end()) {
+        it->second.insert(make_pair(p->getID(), p));
+        return;
+    }
+
+    // otherwise, create a new map and insert it under model number
+    map<string, Plane*> newMap;
+    newMap.insert(make_pair(p->getID(), p));
+
+    this->availablePlanesTable.insert(make_pair(p->getModelNumber(), newMap));
 }
 
 /// ---------- EXIT ----------
