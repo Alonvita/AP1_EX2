@@ -32,9 +32,7 @@ MyEmployee::MyEmployee(Descriptor& desc, Jobs job,
  *
  *  Removes this->employer
  */
-MyEmployee::~MyEmployee() {
-    free(this->employer);
-}
+MyEmployee::~MyEmployee() { free(this->employer); }
 
 /// ---------- GETTERS & SETTERS ----------
 /**
@@ -42,9 +40,7 @@ MyEmployee::~MyEmployee() {
  *
  * @return this MyEmployee's birthday.
  */
-int MyEmployee::getBirthYear() {
-    return this->birthYear;
-}
+int MyEmployee::getBirthYear() { return this->birthYear; }
 
 /**
  * MyEmployee::getEmployer().
@@ -52,33 +48,25 @@ int MyEmployee::getBirthYear() {
  * @return a reference to this MyEmployee's employer
  *
  */
-Employee* MyEmployee::getEmployer() {
-    return this->employer;
-}
+Employee* MyEmployee::getEmployer() { return this->employer; }
 
 /**
  * MyEmployee::getID().
  *
  * @return the the ID held by the descriptor for this object.
  */
-string MyEmployee::getID() {
-    return this->descriptor.getID();
-}
+string MyEmployee::getID() { return this->descriptor.getID(); }
 
 /**
  * MyEmployee::getSeniority().
  *
  * @return the seniority of this MyEmployee as int
  */
-int MyEmployee::getSeniority() {
-    return this->seniority;
-}
+int MyEmployee::getSeniority() { return this->seniority; }
 
 /**
  * MyEmployee::getTitle().
  *
  * @return this employer's job
  */
-Jobs MyEmployee::getTitle() {
-    return this->jobs;
-}
+Jobs MyEmployee::getTitle() { return this->jobs; }

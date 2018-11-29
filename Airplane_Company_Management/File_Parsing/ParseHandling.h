@@ -7,12 +7,12 @@
 
 #define SPACE " "
 
-#define MODELS_FP "../DatabaseFiles/models.txt"
-#define PLANES_FP "../DatabaseFiles/planes.txt"
+#define MODELS_FP "models.txt"
+#define PLANES_FP "planes.txt"
 #define FLIGHTS_FP "flights.txt"
 #define EMPLOYEE_FP "employee.txt"
-#define CUSTOMER_FP "../DatabaseFiles/customers.txt"
-#define RESERVATIONS_FP "../DatabaseFiles/reservations.txt"
+#define CUSTOMER_FP "customers.txt"
+#define RESERVATIONS_FP "reservations.txt"
 #define ASSIGNMENTS_FILE "assignments.txt"
 
 #include "../interface.h"
@@ -90,6 +90,7 @@ private:
     map<Jobs, int>  parseCrewNeededForPlane(int);
     Jobs            parseJobFromString(const string&);
     Classes         parseStringToClass(const string&);
+    bool            existsByID(const string&, const string&);
     void            writeStrToFile(const string &, const string &);
 };
 #endif //AP1_FROM_FILE_H

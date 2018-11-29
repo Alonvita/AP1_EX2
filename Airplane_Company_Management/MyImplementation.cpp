@@ -499,9 +499,9 @@ list<Reservation*> MyImplementation::generateReservationsForFlight(string fid) {
  * exit().
  */
 void MyImplementation::exit() {
-    //parseHandling.parseFlightsToFile(flightsMap);
-      parseHandling.parseEmployeesToFile(employeesMap);
- //   parseHandling.parseCustomersToFile(customersMap);
-  //  parseHandling.parsePlanesToFile(availablePlanesTable);
-   // parseHandling.parseReservationsToFile(reservationsMap);
+    parseHandling.parseFlightsToFile(flightsMap);
+    parseHandling.parseEmployeesToFile(employeesMap);
+    parseHandling.parseCustomersToFile(customersMap);
+    parseHandling.parsePlanesToFile(availablePlanesTable);
+    parseHandling.parseReservationsToFile(reservationsMap);
 }

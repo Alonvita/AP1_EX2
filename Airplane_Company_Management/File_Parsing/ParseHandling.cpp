@@ -333,6 +333,9 @@ Flight* ParseHandling::getFlightByFlightID(const string &fid) {
             list<Employee*> eList = generateEmployeesByFlightID(fid);
             Plane* p = getPlaneByFlightID(fid);
 
+            if(p == nullptr)
+                throw runtime_error("There is no plane associated with this flight.");
+
             return new MyFlight(desc, modelNum, rList, eList, date, src, dest, p);
         }
     }
@@ -457,6 +460,67 @@ list<Reservation*> ParseHandling::generateReservationsByFlightID(const string &f
     }
 }
 
+/**
+ * parseCrewNeededForPlane(int modelID).
+ *
+ * @param modelID int -- the model of the plane
+ * @return
+ */
+map<Jobs, int> ParseHandling::parseCrewNeededForPlane(int model) {
+    // Local Variables
+    ifstream file(MODELS_FP);
+    vector<string> vec;
+
+    // initialize crewNeeded map
+    map<Jobs, int> crewNeeded;
+
+    auto it = vec.begin();
+
+    string l;
+    // for each line
+    while(getline(file, l)) {
+        // get istringstream of the line
+        istringstream iss(l);
+
+        // turn it into a vector separated by words
+        vector<string> splitLine(istream_iterator<string>{iss},
+                                 istream_iterator<string>());
+        // MODEL
+        if (strcmp(splitLine.at(0).c_str(), "MODEL") == 0) {
+            // check number
+            if(stoi(splitLine.at(1)) == model) {
+                // iterate over all lines that hold JOB [NUMBER] (until meeting the next MODEL)
+                while(getline(file, l)) {
+                    // reached next MODEL -> break
+                    if(strcmp(splitLine.at(0).c_str(), "MODEL") == 0)
+                        break;
+
+                    // get the iss of the current row
+                    istringstream iss1(l);
+
+                    // split to vector
+                    vector<string> spliteLine2(
+                            istream_iterator<string>{iss1},
+                            istream_iterator<string>());
+
+                    // parse the Job and convert the amount of assignedCrew needed for the job
+                    Jobs parsedJob = parseJobFromString(spliteLine2.at(0));
+                    int employeesNeeded = stoi(spliteLine2.at(1));
+
+                    // add new entry to the map
+                    crewNeeded.insert(make_pair(parsedJob, employeesNeeded));
+                }
+                // reaching here means that a crew was filled in the map - return it
+                return crewNeeded;
+            }
+        }
+    }
+
+    // map will be empty should we reach here
+    throw runtime_error("This model does not exist in our system.");
+}
+
+
 ///---------- PARSE TO FILE ----------
 /**
  * parseEmployeesToFile(map<Jobs, map<string, Employee *>> employeesMap).
@@ -468,10 +532,8 @@ void ParseHandling::parseEmployeesToFile(map<Jobs, map<string, Employee *>> empl
     for (pair<Jobs, map<string, Employee *>> p : employeesMap) {
         Jobs job = p.first;
         for (pair<string, Employee *> p2 : p.second) {
-            // try to get employee from file
-            Employee* checkEmpExists = getEmployeeByEmployeeID(p2.first);
-
-            if(checkEmpExists != nullptr)
+            // check if employee exists already
+            if(existsByID(p2.first, EMPLOYEE_FP))
                 continue;
 
             stringstream ss;
@@ -509,14 +571,19 @@ void ParseHandling::parseEmployeesToFile(map<Jobs, map<string, Employee *>> empl
  * @param customersMap map<string, Customer *> -- customers map.
  */
 void ParseHandling::parseCustomersToFile(map<string, Customer *> customersMap) {
-    stringstream ss;
 
     for(pair<string, Customer*> p : customersMap) {
+        // check if customer exists already
+        if(existsByID(p.first, CUSTOMER_FP))
+            continue;
+
+        stringstream ss;
         ss << p.first; // ID
         ss << SPACE;
         ss << p.second->getFullName(); // FULL_NAME
         ss << SPACE;
         ss << p.second->getPriority(); // PRIORITY
+        ss << endl; // ENDLINE
 
         writeStrToFile(ss.str(), CUSTOMER_FP);
     }
@@ -528,14 +595,13 @@ void ParseHandling::parseCustomersToFile(map<string, Customer *> customersMap) {
  * @param flightsMap map<string, Flight *> -- a flights map.
  */
 void ParseHandling::parseFlightsToFile(map<string, Flight *> flightsMap) {
-    stringstream ssFlight;
-    stringstream ssAssign;
 
     for(pair<string, Flight*> p : flightsMap) {
-        // check if exists in files
-        Flight* f = getFlightByFlightID(p.first);
+        stringstream ssFlight;
+        stringstream ssAssign;
 
-        if(f != nullptr)
+        // check if employee exists already
+        if(existsByID(p.first, FLIGHTS_FP))
             continue;
 
         ssFlight << p.first; // ID
@@ -548,7 +614,7 @@ void ParseHandling::parseFlightsToFile(map<string, Flight *> flightsMap) {
         ssFlight << SPACE;
         ssFlight << p.second->getSource();
         ssFlight << SPACE;
-        p.second->getDestination();
+        ssFlight << p.second->getDestination();
         ssFlight << endl;
 
         for(Employee* emp : p.second->getAssignedCrew()) {
@@ -560,6 +626,7 @@ void ParseHandling::parseFlightsToFile(map<string, Flight *> flightsMap) {
 
         writeStrToFile(ssAssign.str(), ASSIGNMENTS_FILE); // write employees to Assignments.txt
         writeStrToFile(ssFlight.str(), FLIGHTS_FP); // write flight to Flights.txt
+        ssAssign.clear(); // TODO: CHECK THAT ACTUALLY CLEARS THE SS
     }
 }
 
@@ -569,10 +636,14 @@ void ParseHandling::parseFlightsToFile(map<string, Flight *> flightsMap) {
  * @param planesMap map<int, map<string, Plane *>> -- planes map.
  */
 void ParseHandling::parsePlanesToFile(map<int, map<string, Plane *>> planesMap) {
-    stringstream ss;
 
     for (pair<int, map<string, Plane*>> mapP : planesMap) {
         for(pair<string, Plane*> p : mapP.second) {
+            // check if employee exists already
+            if(existsByID(p.first, PLANES_FP))
+                continue;
+
+            stringstream ss;
             ss << p.first; // ID
             ss << SPACE;
             ss << p.second->getModelNumber(); // MODEL NUMBER
@@ -582,7 +653,22 @@ void ParseHandling::parsePlanesToFile(map<int, map<string, Plane *>> planesMap) 
             ss << p.second->getMaxEconomyClass(); // MAX ECONOMY
             ss << endl;
 
+            stringstream ssJob;
+            ssJob << "MODEL";
+            ssJob << SPACE;
+            ssJob << p.second->getModelNumber();
+            ssJob << endl;
+            for(pair<Jobs, int> job : p.second->getCrewNeeded()) {
+                ssJob << parseJobToString(job.first);
+                ssJob << SPACE;
+                ssJob << job.second;
+                ssJob << endl;
+            }
+
+            // wire plane/
             writeStrToFile(ss.str(), PLANES_FP);
+            // write crew needed
+            writeStrToFile(ssJob.str(), MODELS_FP);
         }
     }
 }
@@ -593,9 +679,13 @@ void ParseHandling::parsePlanesToFile(map<int, map<string, Plane *>> planesMap) 
  * @param reservationsMap map<string, Reservation *> -- reservations map.
  */
 void ParseHandling::parseReservationsToFile(map<string, Reservation *> reservationsMap) {
-    stringstream ss;
 
     for(pair<string, Reservation *> p : reservationsMap) {
+        stringstream ss;
+        // check if employee exists already
+        if(existsByID(p.first, RESERVATIONS_FP))
+            continue;
+
         ss << p.first; // ID
         ss << SPACE;
         ss << p.second->getCustomer()->getID(); // CUSTOMER ID
@@ -658,66 +748,6 @@ Classes ParseHandling::parseStringToClass(const string& cls) {
         return SECOND_CLASS;
 
     throw runtime_error("Error parsing class from file");
-}
-
-/**
- * parseCrewNeededForPlane(int modelID).
- *
- * @param modelID int -- the model of the plane
- * @return
- */
-map<Jobs, int> ParseHandling::parseCrewNeededForPlane(int model) {
-    // Local Variables
-    ifstream file(MODELS_FP);
-    vector<string> vec;
-
-    // initialize crewNeeded map
-    map<Jobs, int> crewNeeded;
-
-    auto it = vec.begin();
-
-    string l;
-    // for each line
-    while(getline(file, l)) {
-        // get istringstream of the line
-        istringstream iss(l);
-
-        // turn it into a vector separated by words
-        vector<string> splitLine(istream_iterator<string>{iss},
-                                 istream_iterator<string>());
-        // MODEL
-        if (strcmp(splitLine.at(0).c_str(), "MODEL") == 0) {
-            // check number
-            if(stoi(splitLine.at(1)) == model) {
-                // iterate over all lines that hold JOB [NUMBER] (until meeting the next MODEL)
-                while(getline(file, l)) {
-                    // reached next MODEL -> break
-                    if(strcmp(splitLine.at(0).c_str(), "MODEL") == 0)
-                        break;
-
-                    // get the iss of the current row
-                    istringstream iss1(l);
-
-                    // split to vector
-                    vector<string> spliteLine2(
-                            istream_iterator<string>{iss1},
-                            istream_iterator<string>());
-
-                    // parse the Job and convert the amount of assignedCrew needed for the job
-                    Jobs parsedJob = parseJobFromString(spliteLine2.at(0));
-                    int employeesNeeded = stoi(spliteLine2.at(1));
-
-                    // add new entry to the map
-                    crewNeeded.insert(make_pair(parsedJob, employeesNeeded));
-                }
-                // reaching here means that a crew was filled in the map - return it
-                return crewNeeded;
-            }
-        }
-    }
-
-    // map will be empty should we reach here
-    throw runtime_error("This model does not exist in our system.");
 }
 
 /**
@@ -805,4 +835,39 @@ string ParseHandling::parseClassToStr(Classes cls) {
 bool ParseHandling::fileExists(const string& fp) {
     struct stat buf;
     return (stat(fp.c_str(), &buf) != -1);
+}
+
+/**
+ * existsByID(const string& id, const string& fp).
+ *
+ * @param id const string& -- an id
+ * @param fp const string& -- a FP
+ * @return true if the id exists in the file, or false otherwise.
+ */
+bool ParseHandling::existsByID(const string& id, const string& fp) {
+    if (!fileExists(fp))
+        return false;
+
+    // Local Variables
+    ifstream file(fp);
+    vector<string> vec;
+
+    auto it = vec.begin();
+
+    string l;
+    // for each line
+    while (getline(file, l)) {
+        // get istringstream of the line
+        istringstream iss(l);
+
+        // turn it into a vector separated by words
+        vector<string> splitLine(istream_iterator<string>{iss},
+                                 istream_iterator<string>());
+        // MODEL
+        if (strcmp(splitLine.at(0).c_str(), id.c_str()) == 0) {
+            return true;
+        }
+    }
+    // none was found ->
+    return false;
 }

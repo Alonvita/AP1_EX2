@@ -64,8 +64,8 @@ public:
     bool isEmployeeAvailableOn (string&, Date);
     Plane* findAvailablePlaneInSystem (int, Date);
     vector<Flight*> getFlightsForEmployee (string&);
+    list<Reservation*> generateReservationsForFlight(string);
     list<Employee*> findCrewForFlight (map<Jobs, int>, Date);
-    list<Reservation*> generateReservationsForFlight(string fid);
 
     void exit() override;
 };

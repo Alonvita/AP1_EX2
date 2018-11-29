@@ -191,6 +191,14 @@ int main() {
     Flight* f2 = myImplementation->addFlight(747, d, "israel", "metula");
     cout << "DEBUG: Flight Added: " << f2->getID() << endl;
 
+    myImplementation->addResevation("CID0", "FID0", FIRST_CLASS, 20);
+    myImplementation->addResevation("CID0", "FID0", FIRST_CLASS, 20);
+    myImplementation->addResevation("CID0", "FID0", SECOND_CLASS, 15);
+    myImplementation->addResevation("CID0", "FID0", SECOND_CLASS, 15);
+    myImplementation->addResevation("CID1", "FID1", FIRST_CLASS, 22);
+    myImplementation->addResevation("CID2", "FID1", SECOND_CLASS, 13);
+
+
+    // EXIT TO PARSE INTO FILES
     myImplementation->exit();
-    //myImplementation->addResevation();
 }
