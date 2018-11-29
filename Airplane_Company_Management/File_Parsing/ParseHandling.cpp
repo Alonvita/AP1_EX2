@@ -239,8 +239,15 @@ Plane* ParseHandling::getPlaneByPlaneID(const string &pid) {
             int maxFirst = stoi(splitLine.at(2)); // get max first size
             int maxEconomy = stoi(splitLine.at(3)); // get max economy size
 
+            // create the new plane
             Descriptor desc = Descriptor(pid);
-            return new MyPlane(desc, modelNumber, crewNeeded, maxEconomy, maxFirst);
+            MyPlane* plane = new MyPlane(desc, modelNumber, crewNeeded, maxEconomy, maxFirst);
+
+            // add the booked flights dates
+            vector<Date> datesVec = parseDatesVectorFromFile(plane->getID());
+            plane->setBookedDates(datesVec);
+
+            return plane;
         }
     }
 
@@ -936,6 +943,10 @@ void ParseHandling::parseDatesVectorToFile(const string& pid, vector<Date> dates
         outfile.open(PLANES_BOOKING_DATES, std::ios_base::app);
     }
 
+    // if the dates vector is empty -> return
+    if(datesVec.empty())
+        return;
+
     stringstream ss;
 
     ss << pid;
@@ -948,4 +959,59 @@ void ParseHandling::parseDatesVectorToFile(const string& pid, vector<Date> dates
     }
 
     writeStrToFile(ss.str(), PLANES_BOOKING_DATES);
+}
+
+/**
+ * parseDatesVectorFromFile(const string &, vector<Date>)
+ *
+ * @param pid const string& -- plane ID.
+ * @return a vector of all the booked flights for this ID.
+ */
+vector<Date> ParseHandling::parseDatesVectorFromFile(const string &) {
+    vector<Date> datesVec;
+
+    // file doesn't exist
+    if (!fileExists(PLANES_BOOKING_DATES))
+        return datesVec;
+
+    // file exists - open it
+    ifstream file(PLANES_BOOKING_DATES);
+    vector<string> vec;
+
+    auto it = vec.begin();
+
+    string l;
+    // for each line
+    while (getline(file, l)) {
+        // get istringstream of the line
+        istringstream iss(l);
+
+        // turn it into a vector separated by words
+        vector<string> splitLine(istream_iterator<string>{iss},
+                                 istream_iterator<string>());
+        // check if nex plane ID
+        if (strcmp(splitLine.at(0).substr(0, 3).c_str(), "PID") == 0) {
+            // get next line
+            while (getline(file, l)) {
+                // get the iss of the current row
+                istringstream iss1(l);
+
+                // split to vector
+                vector<string> splitDateLine(istream_iterator<string>{iss1},
+                                             istream_iterator<string>());
+
+                // reached next id -> break
+                if (strcmp(splitDateLine.at(0).substr(0, 3).c_str(), "PID") == 0)
+                    break;
+
+                // otherwise it's a date -> make a new date from it
+                Date date = Date(splitDateLine.at(0).c_str());
+
+                // add new entry to the vector
+                datesVec.push_back(date);
+            }
+            // reaching here means that a crew was filled in the map - return it
+            return datesVec;
+        }
+    }
 }

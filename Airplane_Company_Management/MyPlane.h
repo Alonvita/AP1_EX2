@@ -21,6 +21,7 @@ public:
     /// ---------- GETTERS & SETTERS ----------
     vector<Date>    getBookedDates();
     bool            bookFlightOn(Date);
+    void            setBookedDates(vector<Date>);
 
     // ---- OVERRIDING ----
     string          getID() override;

@@ -92,6 +92,7 @@ private:
     Jobs            parseJobFromString(const string&);
     Classes         parseStringToClass(const string&);
     bool            modelAlreadyExists(int modelNumber);
+    vector<Date>    parseDatesVectorFromFile(const string&);
     bool            existsByID(const string&, const string&);
     void            writeStrToFile(const string &, const string &);
     void            parseDatesVectorToFile(const string&, vector<Date>);

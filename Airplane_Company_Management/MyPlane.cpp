@@ -51,6 +51,13 @@ bool MyPlane::bookFlightOn(Date flightDate) {
 }
 
 /**
+ * setBookedDates(vector<Date>).
+ */
+void MyPlane::setBookedDates(vector<Date> datesVec) {
+    this->bookedDates = datesVec;
+}
+
+/**
  * getBookedDates().
  *
  * @return a vector<Date> of all the booked dates for this plane
