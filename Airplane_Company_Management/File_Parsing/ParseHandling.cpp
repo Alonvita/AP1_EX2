@@ -671,6 +671,10 @@ void ParseHandling::parsePlanesToFile(map<int, map<string, Plane *>> planesMap) 
                 // write crew needed
                 writeStrToFile(ssJob.str(), MODELS_FP);
             }
+
+            parseDatesVectorToFile(p.second->getID(),
+                    ((MyPlane*)p.second)->getBookedDates());
+
             // wire plane
             writeStrToFile(ss.str(), PLANES_FP);
         }
@@ -914,4 +918,34 @@ bool ParseHandling::modelAlreadyExists(int modelNumber) {
     }
     // didn't find
     return false;
+}
+
+/**
+ * parseDatesVectorToFile(const string& pid, vector<Date> datesVec).
+ *
+ * @param pid const string& -- plane ID.
+ * @param datesVec vectorCate> -- a vector of dates.
+ */
+void ParseHandling::parseDatesVectorToFile(const string& pid, vector<Date> datesVec) {
+    ofstream outfile;
+
+    // open new or append
+    if(!fileExists(PLANES_BOOKING_DATES)) {
+        outfile.open(PLANES_BOOKING_DATES);
+    } else {
+        outfile.open(PLANES_BOOKING_DATES, std::ios_base::app);
+    }
+
+    stringstream ss;
+
+    ss << pid;
+    ss << endl;
+
+    // for each date
+    for(Date d : datesVec) {
+        ss << d.getDate();
+        ss << endl;
+    }
+
+    writeStrToFile(ss.str(), PLANES_BOOKING_DATES);
 }

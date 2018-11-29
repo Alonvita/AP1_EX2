@@ -14,6 +14,7 @@
 #define CUSTOMER_FP "customers.txt"
 #define RESERVATIONS_FP "reservations.txt"
 #define ASSIGNMENTS_FILE "assignments.txt"
+#define PLANES_BOOKING_DATES "bookedPlanes.txt"
 
 #include "../interface.h"
 #include "File_Parsing_Utility/Line.h"
@@ -93,5 +94,6 @@ private:
     bool            modelAlreadyExists(int modelNumber);
     bool            existsByID(const string&, const string&);
     void            writeStrToFile(const string &, const string &);
+    void            parseDatesVectorToFile(const string&, vector<Date>);
 };
 #endif //AP1_FROM_FILE_H
