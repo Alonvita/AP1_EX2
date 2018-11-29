@@ -489,23 +489,25 @@ map<Jobs, int> ParseHandling::parseCrewNeededForPlane(int model) {
         if (strcmp(splitLine.at(0).c_str(), "MODEL") == 0) {
             // check number
             if(stoi(splitLine.at(1)) == model) {
+                // get next line
                 // iterate over all lines that hold JOB [NUMBER] (until meeting the next MODEL)
                 while(getline(file, l)) {
-                    // reached next MODEL -> break
-                    if(strcmp(splitLine.at(0).c_str(), "MODEL") == 0)
-                        break;
 
                     // get the iss of the current row
                     istringstream iss1(l);
 
                     // split to vector
-                    vector<string> spliteLine2(
+                    vector<string> splitEmpLine(
                             istream_iterator<string>{iss1},
                             istream_iterator<string>());
 
+                    // reached next MODEL -> break
+                    if(strcmp(splitEmpLine.at(0).c_str(), "MODEL") == 0)
+                        break;
+
                     // parse the Job and convert the amount of assignedCrew needed for the job
-                    Jobs parsedJob = parseJobFromString(spliteLine2.at(0));
-                    int employeesNeeded = stoi(spliteLine2.at(1));
+                    Jobs parsedJob = parseJobFromString(splitEmpLine.at(0));
+                    int employeesNeeded = stoi(splitEmpLine.at(1));
 
                     // add new entry to the map
                     crewNeeded.insert(make_pair(parsedJob, employeesNeeded));

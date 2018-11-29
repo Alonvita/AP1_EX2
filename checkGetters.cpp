@@ -15,6 +15,6 @@ int Test2() {
 
     if(strcmp(plane->getID().c_str(), pid0.c_str()) == 0)
         cout << "getPlane worked for: " << plane->getID() << endl;
-    if(strcmp(plane1->getID().c_str(), pid0.c_str()) == 0)
+    if(strcmp(plane1->getID().c_str(), pid1.c_str()) == 0)
         cout << "getPlane worked for: " << plane1->getID() << endl;
 }
