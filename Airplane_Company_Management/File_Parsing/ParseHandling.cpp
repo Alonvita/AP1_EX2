@@ -653,22 +653,24 @@ void ParseHandling::parsePlanesToFile(map<int, map<string, Plane *>> planesMap) 
             ss << p.second->getMaxEconomyClass(); // MAX ECONOMY
             ss << endl;
 
-            stringstream ssJob;
-            ssJob << "MODEL";
-            ssJob << SPACE;
-            ssJob << p.second->getModelNumber();
-            ssJob << endl;
-            for(pair<Jobs, int> job : p.second->getCrewNeeded()) {
-                ssJob << parseJobToString(job.first);
+            // if model doesn't exist -> write it.
+            if(!modelAlreadyExists(p.second->getModelNumber())) {
+                stringstream ssJob;
+                ssJob << "MODEL";
                 ssJob << SPACE;
-                ssJob << job.second;
+                ssJob << p.second->getModelNumber();
                 ssJob << endl;
+                for (pair<Jobs, int> job : p.second->getCrewNeeded()) {
+                    ssJob << parseJobToString(job.first);
+                    ssJob << SPACE;
+                    ssJob << job.second;
+                    ssJob << endl;
+                }
+                // write crew needed
+                writeStrToFile(ssJob.str(), MODELS_FP);
             }
-
-            // wire plane/
+            // wire plane
             writeStrToFile(ss.str(), PLANES_FP);
-            // write crew needed
-            writeStrToFile(ssJob.str(), MODELS_FP);
         }
     }
 }
@@ -869,5 +871,45 @@ bool ParseHandling::existsByID(const string& id, const string& fp) {
         }
     }
     // none was found ->
+    return false;
+}
+
+/**
+ * checkIfModelExists(int modelNumber).
+ *
+ * @param modelNumber int -- the model number
+ * @return true if the model already exists in the MODELS_FP, or false otherwise
+ */
+bool ParseHandling::modelAlreadyExists(int modelNumber) {
+    if (!fileExists(MODELS_FP))
+        return false;
+
+    // Local Variables
+    ifstream file(MODELS_FP);
+    vector<string> vec;
+
+    auto it = vec.begin();
+
+    string l;
+    // for each line
+    while (getline(file, l)) {
+        // get istringstream of the line
+        istringstream iss(l);
+
+        // turn it into a vector separated by words
+        vector<string> splitLine(istream_iterator<string>{iss},
+                                 istream_iterator<string>());
+
+        // skip every like that doesn't start with "MODEL"
+        if(strcmp(splitLine.at(0).c_str(), "MODEL") != 0)
+            continue;
+
+        // got MODEL -> check number
+        string modelNumStr = to_string(modelNumber);
+        if(strcmp(splitLine.at(1).c_str(), modelNumStr.c_str()) == 0)
+            // if equals -> return true
+            return true;
+    }
+    // didn't find
     return false;
 }

@@ -90,6 +90,7 @@ private:
     map<Jobs, int>  parseCrewNeededForPlane(int);
     Jobs            parseJobFromString(const string&);
     Classes         parseStringToClass(const string&);
+    bool            modelAlreadyExists(int modelNumber);
     bool            existsByID(const string&, const string&);
     void            writeStrToFile(const string &, const string &);
 };
